@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم المشرف - Mais Beauty</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-gold: #C48B71;
+            --color-bg: #FAF4EF;
+            --color-surface: #FFFFFF;
+            --color-text-dark: #3A3331;
+            --color-border: #E8DCCC;
+            --radius: 8px;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-dark);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-family: 'Cinzel', serif;
+            color: var(--color-gold);
+        }
+
+        .btn {
+            background-color: var(--color-gold);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .card {
+            background: var(--color-surface);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--color-text-dark);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            font-family: 'Tajawal', sans-serif;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--color-gold);
+            box-shadow: 0 0 0 2px rgba(196, 139, 113, 0.2);
+        }
+
+        .product-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            background: #fff;
+        }
+
+        .product-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: var(--radius);
+            margin-left: 15px;
+        }
+
+        .product-info {
+            flex-grow: 1;
+        }
+        
+        .product-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+        }
+
+        .product-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .lang-section {
+            border-right: 3px solid var(--color-gold);
+            padding-right: 15px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .product-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            .product-item img {
+                margin: 0 0 10px 0;
+            }
+            .product-item > div {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-container" class="card" style="max-width: 400px; margin: 100px auto; text-align: center;">
+        <h2 style="color: var(--color-gold); font-family: 'Cinzel', serif;">Mais Beauty Admin</h2>
+        <p style="margin-bottom: 20px;">الرجاء تسجيل الدخول</p>
+        <input type="email" id="admin-email" placeholder="البريد الإلكتروني (Email)" style="margin-bottom: 15px; text-align: center;" required>
+        <input type="password" id="admin-password" placeholder="كلمة السر (Password)" style="margin-bottom: 15px; text-align: center;" required>
+        <button id="login-btn" class="btn" style="width: 100%;">دخول</button>
+        <p id="login-error" style="color: red; display: none; margin-top: 10px;">بيانات الدخول غير صحيحة!</p>
+        <a href="index.html" style="display: block; margin-top: 15px; font-size: 0.9rem;">العودة للمتجر</a>
+    </div>
+
+    <div class="admin-container" id="admin-content" style="display: none;">
+        <div class="header">
+            <h1>إدارة المتجر - Mais Beauty</h1>
+            <div>
+                <button id="logout-btn" class="btn btn-danger" style="margin-left: 10px;">تسجيل خروج</button>
+                <a href="index.html" class="btn">العودة للمتجر</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>إضافة منتج جديد</h2>
+            <form id="add-product-form">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>التصنيف (Category)</label>
+                        <select id="p-category" required>
+                            <option value="offers">عروض خاصة (Offers)</option>
+                            <option value="serums">سيرومات (Serums)</option>
+                            <option value="masks">ماسكات وجه (Masks)</option>
+                            <option value="eyes">لزقات عين (Eye Pads)</option>
+                            <option value="creams">كريمات (Creams)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>السعر بالدولار ($)</label>
+                        <input type="number" id="p-price" step="0.01" min="0" placeholder="مثال: 3.50" required>
+                        <small style="color: #888;">سيتم تحويله للسوري تلقائياً في المتجر</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>صورة المنتج (Product Image)</label>
+                    <input type="file" id="p-image-file" accept="image/*" required style="padding: 10px; background: #fff;">
+                    <small style="color: #888;">سيتم رفع الصورة وحفظها تلقائياً في قاعدة بيانات Firebase.</small>
+                </div>
+
+                <div class="lang-section">
+                    <h3 style="margin-top: 0; color: var(--color-gold);">التفاصيل (اللغة العربية - أساسي)</h3>
+                    <div class="form-group">
+                        <label>عنوان المنتج</label>
+                        <input type="text" id="p-title-ar" required>
+                    </div>
+                    <div class="form-group">
+                        <label>وصف المنتج</label>
+                        <textarea id="p-desc-ar" rows="2" required></textarea>
+                    </div>
+                </div>
+
+                <div class="lang-section" style="border-right-color: #ccc;">
+                    <h3 style="margin-top: 0; color: #666;">التفاصيل (إنكليزي - اختياري)</h3>
+                    <div class="form-group">
+                        <label>Title (English)</label>
+                        <input type="text" id="p-title-en">
+                    </div>
+                    <div class="form-group">
+                        <label>Description (English)</label>
+                        <textarea id="p-desc-en" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="lang-section" style="border-right-color: #ccc;">
+                    <h3 style="margin-top: 0; color: #666;">التفاصيل (ألماني - اختياري)</h3>
+                    <div class="form-group">
+                        <label>Titel (Deutsch)</label>
+                        <input type="text" id="p-title-de">
+                    </div>
+                    <div class="form-group">
+                        <label>Beschreibung (Deutsch)</label>
+                        <textarea id="p-desc-de" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; padding: 15px; font-size: 1.1rem;">إضافة المنتج</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>المنتجات الحالية (<span id="product-count">0</span>)</h2>
+            <div id="product-list" class="product-list">
+                <!-- Products will be listed here -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>

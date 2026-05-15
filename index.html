@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mais Beauty - Skincare</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=3">
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <h1 data-i18n="logo">Mais Beauty</h1>
+            </div>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#serums-section" data-i18n="serums_title">سيرومات</a></li>
+                    <li><a href="#masks-section" data-i18n="masks_title">ماسكات</a></li>
+                    <li><a href="#eyes-section" data-i18n="eyes_title">لزقات عين</a></li>
+                    <li><a href="#creams-section" data-i18n="creams_title">كريمات</a></li>
+                </ul>
+            </nav>
+
+            <div class="controls">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode" title="Toggle Dark/Light Mode">🌙</button>
+                <div class="switcher">
+                    <select id="lang-switcher" aria-label="Language Switcher">
+                        <option value="ar">العربية</option>
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </div>
+                <div class="switcher">
+                    <select id="currency-switcher" aria-label="Currency Switcher">
+                        <option value="SYP">SYP (ل.س)</option>
+                        <option value="USD">USD ($)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <img src="assets/logo.jpg" alt="Mais Beauty Logo" class="hero-logo">
+            <p class="hero-tagline" data-i18n="hero_tagline">جمالك يبدأ من هنا - منتجات ألمانية أصلية</p>
+        </div>
+    </section>
+
+    <!-- Offers Section -->
+    <section class="products-section container" id="offers-section">
+        <h3 class="section-title" data-i18n="offers_title">العروض الخاصة</h3>
+        <div class="products-grid" id="offers-grid"></div>
+    </section>
+
+    <!-- Serums Section -->
+    <section class="products-section container" id="serums-section">
+        <h3 class="section-title" data-i18n="serums_title">قسم السيرومات</h3>
+        <div class="products-grid" id="serums-grid"></div>
+    </section>
+
+    <!-- Masks Section -->
+    <section class="products-section container" id="masks-section">
+        <h3 class="section-title" data-i18n="masks_title">قسم الماسكات</h3>
+        <div class="products-grid" id="masks-grid"></div>
+    </section>
+
+    <!-- Eye Care Section -->
+    <section class="products-section container" id="eyes-section">
+        <h3 class="section-title" data-i18n="eyes_title">لزقات تحت العين</h3>
+        <div class="products-grid" id="eyes-grid"></div>
+    </section>
+
+    <!-- Creams Section -->
+    <section class="products-section container" id="creams-section">
+        <h3 class="section-title" data-i18n="creams_title">قسم الكريمات</h3>
+        <div class="products-grid" id="creams-grid"></div>
+    </section>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="modal-image-container">
+                    <img id="modal-img" src="" alt="">
+                </div>
+                <div class="modal-details">
+                    <h2 id="modal-title"></h2>
+                    <p id="modal-price" class="modal-price"></p>
+                    <div id="modal-desc" class="modal-desc"></div>
+                    
+                    <div class="quantity-selector">
+                        <label for="modal-qty" data-i18n="quantity">الكمية:</label>
+                        <div class="qty-controls">
+                            <button class="qty-btn minus">-</button>
+                            <input type="number" id="modal-qty" value="1" min="1">
+                            <button class="qty-btn plus">+</button>
+                        </div>
+                    </div>
+                    
+                    <button id="modal-add-to-cart" class="btn-primary" data-i18n="add_to_cart">إضافة للسلة</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h2 data-i18n="your_cart">سلة المشتريات</h2>
+            <span class="close-cart">&times;</span>
+        </div>
+        <div id="cart-items" class="cart-items">
+            <!-- Cart items will be rendered here -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span data-i18n="total">الإجمالي:</span>
+                <span id="cart-total-value">0</span>
+            </div>
+            <button id="checkout-btn" class="btn-primary" data-i18n="checkout">إتمام الطلب (عبر الإيميل)</button>
+        </div>
+    </div>
+
+    <!-- Floating Cart Button -->
+    <button id="floating-cart-btn" class="floating-cart-btn">
+        <span class="cart-icon">🛒</span>
+        <span id="cart-count" class="cart-count">0</span>
+    </button>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="contact-info">
+                <h4 data-i18n="contact_us">تواصل معنا</h4>
+                <p>Email: <a href="mailto:mais.elwan@gmail.com">mais.elwan@gmail.com</a></p>
+                <p>Instagram: <a href="https://www.instagram.com/mais_beauty_syria" target="_blank" rel="noopener noreferrer">@mais_beauty_syria</a></p>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 Mais Beauty. All rights reserved. | <a href="admin.html" style="color: var(--color-text-light); text-decoration: underline;">Admin Panel</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- App Logic -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
