@@ -1,9 +1,11 @@
-import { Client, Databases } from "https://cdn.jsdelivr.net/npm/appwrite@16.1.0/+esm";
+import { Client, Databases, Query } from "https://cdn.jsdelivr.net/npm/appwrite@16.1.0/+esm";
 
 const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
 const APPWRITE_PROJECT_ID = "6a0d8738002fb76a4caf";
 const APPWRITE_DATABASE_ID = "mais_beauty_db";
 const APPWRITE_PRODUCTS_COLLECTION_ID = "products";
+const APPWRITE_SETTINGS_COLLECTION_ID = "shop_settings";
+const APPWRITE_SETTINGS_DOCUMENT_ID = "main";
 
 const client = new Client()
     .setEndpoint(APPWRITE_ENDPOINT)
@@ -26,7 +28,38 @@ const appData = {
             add_to_cart: "إضافة للسلة",
             your_cart: "سلة المشتريات",
             total: "الإجمالي:",
-            checkout: "إتمام الطلب (عبر الإيميل)",
+            checkout: "اطلب الآن عبر واتساب",
+            customer_name: "اسم العميل",
+            customer_phone: "رقم هاتف العميل",
+            order_note: "ملاحظات أو رغبات",
+            customer_name_placeholder: "اكتب اسمك",
+            customer_phone_placeholder_syria: "9XXXXXXXX",
+            customer_phone_placeholder_germany: "17XXXXXXXX",
+            customer_phone_placeholder_other: "+4917XXXXXXXX",
+            customer_phone_help_syria: "اكتب رقمك المحلي فقط، مثال: 9XXXXXXXX",
+            customer_phone_help_germany: "اكتب رقمك المحلي فقط، مثال: 17XXXXXXXX",
+            customer_phone_help_other: "اكتب الرقم الكامل مع رمز البلد، مثال: +4917XXXXXXXX",
+            customer_country_other: "بلد آخر",
+            order_note_placeholder: "اختياري",
+            empty_cart_alert: "سلة المشتريات فارغة.",
+            missing_name_alert: "يرجى إدخال اسم العميل.",
+            missing_phone_alert: "يرجى إدخال رقم هاتف العميل.",
+            invalid_phone_alert: "يرجى إدخال رقم هاتف صحيح.",
+            missing_whatsapp_alert: "رقم واتساب المتجر غير مضبوط بعد.",
+            missing_email_alert: "بريد الطلبات غير مضبوط بعد.",
+            email_checkout: "اطلب عبر البريد الإلكتروني",
+            whatsapp_order_title: "طلب جديد - Mais Beauty",
+            whatsapp_customer_name: "اسم العميل",
+            whatsapp_customer_phone: "هاتف العميل",
+            whatsapp_customer_section: "العميل",
+            whatsapp_products: "المنتجات",
+            whatsapp_note: "ملاحظة العميل",
+            whatsapp_order_number: "رقم",
+            whatsapp_product: "المنتج",
+            whatsapp_quantity: "الكمية",
+            whatsapp_unit_price: "سعر القطعة",
+            whatsapp_line_total: "الإجمالي",
+            remove_cart_confirm: "هل تريد إزالة هذا المنتج من سلة المشتريات؟",
             quantity: "الكمية:",
             view_details: "عرض التفاصيل"
         },
@@ -43,7 +76,38 @@ const appData = {
             add_to_cart: "Add to Cart",
             your_cart: "Your Cart",
             total: "Total:",
-            checkout: "Checkout (via Email)",
+            checkout: "Order now via WhatsApp",
+            customer_name: "Customer name",
+            customer_phone: "Customer phone",
+            order_note: "Notes or requests",
+            customer_name_placeholder: "Enter your name",
+            customer_phone_placeholder_syria: "9XXXXXXXX",
+            customer_phone_placeholder_germany: "17XXXXXXXX",
+            customer_phone_placeholder_other: "+4917XXXXXXXX",
+            customer_phone_help_syria: "Enter local number only, e.g. 9XXXXXXXX",
+            customer_phone_help_germany: "Enter local number only, e.g. 17XXXXXXXX",
+            customer_phone_help_other: "Enter full number with country code, e.g. +4917XXXXXXXX",
+            customer_country_other: "Other",
+            order_note_placeholder: "Optional",
+            empty_cart_alert: "Your cart is empty.",
+            missing_name_alert: "Please enter the customer name.",
+            missing_phone_alert: "Please enter the customer phone number.",
+            invalid_phone_alert: "Please enter a valid phone number.",
+            missing_whatsapp_alert: "The shop WhatsApp number is not configured yet.",
+            missing_email_alert: "The shop order email is not configured yet.",
+            email_checkout: "Order via email",
+            whatsapp_order_title: "New order - Mais Beauty",
+            whatsapp_customer_name: "Customer name",
+            whatsapp_customer_phone: "Customer phone",
+            whatsapp_customer_section: "Customer",
+            whatsapp_products: "Products",
+            whatsapp_note: "Customer note",
+            whatsapp_order_number: "No.",
+            whatsapp_product: "Product",
+            whatsapp_quantity: "Qty",
+            whatsapp_unit_price: "Unit price",
+            whatsapp_line_total: "Total",
+            remove_cart_confirm: "Remove this product from your cart?",
             quantity: "Quantity:",
             view_details: "View Details"
         },
@@ -60,7 +124,38 @@ const appData = {
             add_to_cart: "In den Warenkorb",
             your_cart: "Warenkorb",
             total: "Gesamt:",
-            checkout: "Bestellen (per E-Mail)",
+            checkout: "Jetzt per WhatsApp bestellen",
+            customer_name: "Kundenname",
+            customer_phone: "Telefonnummer",
+            order_note: "Notiz oder Wünsche",
+            customer_name_placeholder: "Namen eingeben",
+            customer_phone_placeholder_syria: "9XXXXXXXX",
+            customer_phone_placeholder_germany: "17XXXXXXXX",
+            customer_phone_placeholder_other: "+4917XXXXXXXX",
+            customer_phone_help_syria: "Nur lokale Nummer eingeben, z. B. 9XXXXXXXX",
+            customer_phone_help_germany: "Nur lokale Nummer eingeben, z. B. 17XXXXXXXX",
+            customer_phone_help_other: "Vollständige Nummer mit Landesvorwahl eingeben, z. B. +4917XXXXXXXX",
+            customer_country_other: "Anderes Land",
+            order_note_placeholder: "Optional",
+            empty_cart_alert: "Der Warenkorb ist leer.",
+            missing_name_alert: "Bitte den Kundennamen eingeben.",
+            missing_phone_alert: "Bitte die Telefonnummer eingeben.",
+            invalid_phone_alert: "Bitte eine gültige Telefonnummer eingeben.",
+            missing_whatsapp_alert: "Die WhatsApp-Nummer des Shops ist noch nicht eingetragen.",
+            missing_email_alert: "Die Bestell-E-Mail-Adresse des Shops ist noch nicht eingetragen.",
+            email_checkout: "Per E-Mail bestellen",
+            whatsapp_order_title: "Neue Bestellung - Mais Beauty",
+            whatsapp_customer_name: "Kundenname",
+            whatsapp_customer_phone: "Kundentelefon",
+            whatsapp_customer_section: "Kunde",
+            whatsapp_products: "Produkte",
+            whatsapp_note: "Kundennotiz",
+            whatsapp_order_number: "Nr",
+            whatsapp_product: "Produkt",
+            whatsapp_quantity: "Menge",
+            whatsapp_unit_price: "Einzelpreis",
+            whatsapp_line_total: "Gesamt",
+            remove_cart_confirm: "Dieses Produkt aus dem Warenkorb entfernen?",
             quantity: "Menge:",
             view_details: "Details anzeigen"
         }
@@ -71,18 +166,40 @@ const appData = {
 let currentLang = "ar";
 let cart = [];
 let activeProduct = null;
+let shopWhatsAppNumber = "";
+let shopOrderEmail = "";
 
 const productGridIds = ["offers", "serums", "masks", "eyes", "creams"];
 const langSwitcher = document.getElementById("lang-switcher");
 const modal = document.getElementById("product-modal");
 const cartSidebar = document.getElementById("cart-sidebar");
 const floatingCartBtn = document.getElementById("floating-cart-btn");
+const imageLightbox = document.getElementById("image-lightbox");
 
 function init() {
     initTheme();
     setupEventListeners();
     updateTranslations();
+    loadShopSettings();
     loadProducts();
+}
+
+async function loadShopSettings() {
+    try {
+        const settings = await databases.getDocument(
+            APPWRITE_DATABASE_ID,
+            APPWRITE_SETTINGS_COLLECTION_ID,
+            APPWRITE_SETTINGS_DOCUMENT_ID
+        );
+        shopWhatsAppNumber = settings.whatsappNumber || "";
+        shopOrderEmail = settings.orderEmail || "";
+    } catch (error) {
+        console.error("Appwrite shop settings load failed:", error);
+        shopWhatsAppNumber = "";
+        shopOrderEmail = "";
+    }
+
+    updateCheckoutState();
 }
 
 async function loadProducts() {
@@ -94,7 +211,25 @@ async function loadProducts() {
     try {
         const response = await databases.listDocuments(
             APPWRITE_DATABASE_ID,
-            APPWRITE_PRODUCTS_COLLECTION_ID
+            APPWRITE_PRODUCTS_COLLECTION_ID,
+            [
+                Query.limit(100),
+                Query.select([
+                    "name",
+                    "description",
+                    "nameAr",
+                    "nameEn",
+                    "nameDe",
+                    "descriptionAr",
+                    "descriptionEn",
+                    "descriptionDe",
+                    "priceUsdCents",
+                    "imageUrl",
+                    "active",
+                    "sortOrder",
+                    "category"
+                ])
+            ]
         );
 
         appData.products = response.documents || [];
@@ -132,6 +267,7 @@ function setupEventListeners() {
             document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
             updateTranslations();
             renderProducts();
+            updateOpenModalLanguage();
             updateCartUI();
         });
     }
@@ -158,6 +294,19 @@ function setupEventListeners() {
 
     window.addEventListener("click", (event) => {
         if (event.target === modal) modal.style.display = "none";
+        if (event.target === imageLightbox) closeImageLightbox();
+    });
+
+    document.querySelector(".close-lightbox")?.addEventListener("click", closeImageLightbox);
+    document.getElementById("modal-img")?.addEventListener("click", openImageLightbox);
+    document.getElementById("modal-img")?.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openImageLightbox();
+        }
+    });
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeImageLightbox();
     });
 
     document.querySelector(".qty-btn.plus")?.addEventListener("click", () => {
@@ -180,6 +329,8 @@ function setupEventListeners() {
     });
 
     document.getElementById("checkout-btn")?.addEventListener("click", submitOrder);
+    document.getElementById("email-checkout-btn")?.addEventListener("click", submitEmailOrder);
+    document.getElementById("customer-country")?.addEventListener("change", updateCustomerPhoneHelp);
 
     let lastScrollTop = 0;
     const navbar = document.querySelector(".navbar");
@@ -202,12 +353,23 @@ function getProductPriceUsd(product) {
     return Number(product.priceUsdCents || 0) / 100;
 }
 
+function getLocalizedProductText(product, field) {
+    const langSuffix = currentLang.charAt(0).toUpperCase() + currentLang.slice(1);
+    return product[`${field}${langSuffix}`] || product[field] || "";
+}
+
 function updateTranslations() {
     const texts = appData.translations[currentLang];
     document.querySelectorAll("[data-i18n]").forEach((element) => {
         const key = element.getAttribute("data-i18n");
         if (key && texts[key]) element.textContent = texts[key];
     });
+    document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+        const key = element.getAttribute("data-i18n-placeholder");
+        if (key && texts[key]) element.setAttribute("placeholder", texts[key]);
+    });
+    updateCustomerPhoneHelp();
+    updateCheckoutState();
 }
 
 function createEmptyMessage() {
@@ -245,8 +407,8 @@ function renderProducts() {
         const grid = document.getElementById(`${category}-grid`);
         if (!grid) return;
 
-        const name = product.name || "Mais Beauty";
-        const description = product.description || "";
+        const name = getLocalizedProductText(product, "name") || "Mais Beauty";
+        const description = getLocalizedProductText(product, "description");
         const imageUrl = product.imageUrl || "";
         const card = document.createElement("article");
         card.className = "product-card";
@@ -269,7 +431,11 @@ function renderProducts() {
             });
         }
 
-        card.querySelector(".view-btn")?.addEventListener("click", () => openModal(product));
+        card.addEventListener("click", () => openModal(product));
+        card.querySelector(".view-btn")?.addEventListener("click", (event) => {
+            event.stopPropagation();
+            openModal(product);
+        });
         grid.appendChild(card);
     });
 
@@ -288,7 +454,7 @@ function openModal(product) {
 
     if (image) {
         image.src = imageUrl;
-        image.alt = product.name || "";
+        image.alt = getLocalizedProductText(product, "name");
         image.style.display = imageUrl ? "block" : "none";
         image.onerror = () => {
             image.style.display = "none";
@@ -300,11 +466,33 @@ function openModal(product) {
     const desc = document.getElementById("modal-desc");
     const qty = document.getElementById("modal-qty");
 
-    if (title) title.textContent = product.name || "Mais Beauty";
+    if (title) title.textContent = getLocalizedProductText(product, "name") || "Mais Beauty";
     if (price) price.textContent = formatPrice(getProductPriceUsd(product));
-    if (desc) desc.textContent = product.description || "";
+    if (desc) desc.textContent = getLocalizedProductText(product, "description");
     if (qty) qty.value = 1;
     if (modal) modal.style.display = "block";
+}
+
+function updateOpenModalLanguage() {
+    if (!activeProduct || !modal || modal.style.display === "none") return;
+    openModal(activeProduct);
+}
+
+function openImageLightbox() {
+    const modalImage = document.getElementById("modal-img");
+    const lightboxImage = document.getElementById("lightbox-img");
+    if (!modalImage?.src || !lightboxImage || !imageLightbox) return;
+
+    lightboxImage.src = modalImage.src;
+    lightboxImage.alt = modalImage.alt;
+    imageLightbox.classList.add("active");
+    imageLightbox.setAttribute("aria-hidden", "false");
+}
+
+function closeImageLightbox() {
+    if (!imageLightbox) return;
+    imageLightbox.classList.remove("active");
+    imageLightbox.setAttribute("aria-hidden", "true");
 }
 
 function addToCart(product, qty) {
@@ -338,7 +526,7 @@ function updateCartUI() {
         div.innerHTML = `
             ${item.imageUrl ? `<img src="${item.imageUrl}" alt="">` : "<span></span>"}
             <div>
-                <h4>${item.name || "Mais Beauty"}</h4>
+                <h4>${getLocalizedProductText(item, "name") || "Mais Beauty"}</h4>
                 <p>${item.qty} x ${formatPrice(itemPrice)}</p>
             </div>
             <button class="remove-item" type="button" onclick="removeFromCart('${item.$id}')">&times;</button>
@@ -351,22 +539,180 @@ function updateCartUI() {
 }
 
 function removeFromCart(id) {
+    if (!confirm(appData.translations[currentLang].remove_cart_confirm)) return;
     cart = cart.filter((item) => item.$id !== id);
     updateCartUI();
 }
 
+function updateCheckoutState() {
+    const checkoutBtn = document.getElementById("checkout-btn");
+    const emailCheckoutBtn = document.getElementById("email-checkout-btn");
+
+    if (checkoutBtn) {
+        checkoutBtn.disabled = !shopWhatsAppNumber;
+        checkoutBtn.title = shopWhatsAppNumber
+            ? ""
+            : appData.translations[currentLang].missing_whatsapp_alert;
+    }
+
+    if (emailCheckoutBtn) {
+        emailCheckoutBtn.disabled = !shopOrderEmail;
+        emailCheckoutBtn.title = shopOrderEmail
+            ? ""
+            : appData.translations[currentLang].missing_email_alert;
+    }
+}
+
+function getCustomerPhoneMode() {
+    const selectedCountry = document.getElementById("customer-country")?.value || "";
+    if (selectedCountry === "+963") return "syria";
+    if (selectedCountry === "+49") return "germany";
+    return "other";
+}
+
+function updateCustomerPhoneHelp() {
+    const texts = appData.translations[currentLang];
+    const mode = getCustomerPhoneMode();
+    const phoneInput = document.getElementById("customer-phone");
+    const phoneHelp = document.getElementById("customer-phone-help");
+
+    if (phoneInput) {
+        phoneInput.placeholder = texts[`customer_phone_placeholder_${mode}`];
+    }
+    if (phoneHelp) {
+        phoneHelp.textContent = texts[`customer_phone_help_${mode}`];
+    }
+}
+
+function normalizeCustomerPhone(phoneValue) {
+    const selectedCountry = document.getElementById("customer-country")?.value || "";
+    let phone = phoneValue.replace(/\s+/g, "");
+
+    if (selectedCountry) {
+        const countryDigits = selectedCountry.slice(1);
+        phone = phone.replace(/^\+/, "");
+
+        if (phone.startsWith(countryDigits)) {
+            phone = phone.slice(countryDigits.length);
+        }
+
+        phone = phone.replace(/^0+/, "");
+        if (!phone) return "";
+        return `${selectedCountry}${phone}`;
+    }
+
+    if (phone.startsWith("00")) {
+        phone = `+${phone.slice(2)}`;
+    }
+
+    return phone.startsWith("+") && phone.length > 1 ? phone : "";
+}
+
+function createOrderMessage(customerName, customerPhone, note) {
+    const texts = appData.translations[currentLang];
+    const orderLines = cart.map((item, index) => {
+        const unitPrice = getProductPriceUsd(item);
+        const lineTotal = unitPrice * item.qty;
+        const productName = getLocalizedProductText(item, "name") || "Mais Beauty";
+        return [
+            `${index + 1}. ${productName}`,
+            `   ${texts.whatsapp_quantity}: ${item.qty}`,
+            `   ${texts.whatsapp_unit_price}: ${formatPrice(unitPrice)}`,
+            `   ${texts.whatsapp_line_total}: ${formatPrice(lineTotal)}`
+        ].join("\n");
+    });
+    const total = cart.reduce((sum, item) => sum + getProductPriceUsd(item) * item.qty, 0);
+    const messageParts = [
+        texts.whatsapp_order_title,
+        "",
+        `${texts.whatsapp_customer_section}:`,
+        `${texts.whatsapp_customer_name}: ${customerName}`,
+        `${texts.whatsapp_customer_phone}: ${customerPhone}`,
+        "",
+        `${texts.whatsapp_products}:`,
+        "",
+        orderLines.join("\n\n"),
+        "",
+        `${texts.total} ${formatPrice(total)}`
+    ];
+
+    if (note) {
+        messageParts.push("", `${texts.whatsapp_note}: ${note}`);
+    }
+
+    return messageParts.join("\n");
+}
+
 function submitOrder() {
-    if (cart.length === 0) return;
+    const texts = appData.translations[currentLang];
+    const customerName = document.getElementById("customer-name")?.value.trim() || "";
+    const customerPhoneValue = document.getElementById("customer-phone")?.value.trim() || "";
+    const note = document.getElementById("customer-note")?.value.trim() || "";
 
-    const orderDetails = cart.map((item) => {
-        return `${item.name || "Mais Beauty"} (x${item.qty}) - ${formatPrice(getProductPriceUsd(item) * item.qty)}`;
-    }).join("\n");
+    if (cart.length === 0) {
+        alert(texts.empty_cart_alert);
+        return;
+    }
+    if (!customerName) {
+        alert(texts.missing_name_alert);
+        return;
+    }
+    if (!customerPhoneValue) {
+        alert(texts.missing_phone_alert);
+        return;
+    }
+    if (!shopWhatsAppNumber) {
+        alert(texts.missing_whatsapp_alert);
+        return;
+    }
 
-    const total = document.getElementById("cart-total-value")?.textContent || "$0.00";
-    const subject = `طلب جديد من متجر ميس بيوتي - ${new Date().toLocaleDateString()}`;
-    const body = `تفاصيل الطلب:\n\n${orderDetails}\n\nالإجمالي: ${total}\n\nالرجاء التواصل معي لإتمام الدفع والتوصيل.`;
+    const customerPhone = normalizeCustomerPhone(customerPhoneValue);
+    if (!customerPhone) {
+        alert(texts.invalid_phone_alert);
+        return;
+    }
 
-    window.location.href = `mailto:mais.elwan@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const message = createOrderMessage(customerName, customerPhone, note);
+    const whatsappUrl = `https://wa.me/${shopWhatsAppNumber}?text=${encodeURIComponent(message)}`;
+    console.log("WhatsApp order link generated");
+    const opened = window.open(whatsappUrl, "_blank", "noopener");
+    if (!opened) {
+        window.location.href = whatsappUrl;
+    }
+}
+
+function submitEmailOrder() {
+    const texts = appData.translations[currentLang];
+    const customerName = document.getElementById("customer-name")?.value.trim() || "";
+    const customerPhoneValue = document.getElementById("customer-phone")?.value.trim() || "";
+    const note = document.getElementById("customer-note")?.value.trim() || "";
+
+    if (cart.length === 0) {
+        alert(texts.empty_cart_alert);
+        return;
+    }
+    if (!customerName) {
+        alert(texts.missing_name_alert);
+        return;
+    }
+    if (!customerPhoneValue) {
+        alert(texts.missing_phone_alert);
+        return;
+    }
+    if (!shopOrderEmail) {
+        alert(texts.missing_email_alert);
+        return;
+    }
+
+    const subject = "Neue Bestellung - Mais Beauty";
+    const customerPhone = normalizeCustomerPhone(customerPhoneValue);
+    if (!customerPhone) {
+        alert(texts.invalid_phone_alert);
+        return;
+    }
+
+    const message = createOrderMessage(customerName, customerPhone, note);
+    window.location.href = `mailto:${shopOrderEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
 }
 
 window.removeFromCart = removeFromCart;

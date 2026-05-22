@@ -210,6 +210,22 @@
         </div>
 
         <div class="card">
+            <h2>إعدادات المتجر (Shop Settings)</h2>
+            <form id="shop-settings-form">
+                <div class="form-group">
+                    <label for="shop-whatsapp-number">WhatsApp-Nummer für Bestellungen</label>
+                    <input type="text" id="shop-whatsapp-number" inputmode="tel" autocomplete="tel" placeholder="9639... oder 4917...">
+                    <small style="color: #888;">Internationale Nummer ohne + und ohne Leerzeichen.</small>
+                </div>
+                <div class="form-group">
+                    <label for="shop-order-email">Bestell-E-Mail-Adresse</label>
+                    <input type="email" id="shop-order-email" autocomplete="email" placeholder="orders@example.com">
+                </div>
+                <button type="submit" id="save-shop-settings-btn" class="btn">Shop Settings speichern</button>
+            </form>
+        </div>
+
+        <div class="card">
             <h2 id="form-title">إضافة منتج جديد</h2>
             <div id="edit-mode-banner" class="edit-mode-banner"></div>
             <form id="add-product-form">
@@ -242,6 +258,40 @@
                     <div class="form-group">
                         <label>الوصف (Description)</label>
                         <textarea id="p-desc" rows="3" required></textarea>
+                    </div>
+                </div>
+
+                <div class="lang-section">
+                    <h3 style="margin-top: 0; color: var(--color-gold);">النصوص حسب اللغة (Localized Text)</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>الاسم بالعربية (nameAr)</label>
+                            <input type="text" id="p-name-ar">
+                        </div>
+                        <div class="form-group">
+                            <label>الوصف بالعربية (descriptionAr)</label>
+                            <textarea id="p-desc-ar" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>English Name (nameEn)</label>
+                            <input type="text" id="p-name-en">
+                        </div>
+                        <div class="form-group">
+                            <label>English Description (descriptionEn)</label>
+                            <textarea id="p-desc-en" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Deutscher Name (nameDe)</label>
+                            <input type="text" id="p-name-de">
+                        </div>
+                        <div class="form-group">
+                            <label>Deutsche Beschreibung (descriptionDe)</label>
+                            <textarea id="p-desc-de" rows="3"></textarea>
+                        </div>
                     </div>
                 </div>
 
@@ -284,6 +334,6 @@
         </div>
     </div>
 
-    <script type="module" src="admin.js"></script>
+    <script type="module" src="admin.js?v=4"></script>
 </body>
 </html>

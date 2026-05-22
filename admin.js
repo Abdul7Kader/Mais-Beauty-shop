@@ -87,6 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitBtn = document.getElementById('form-submit-btn');
     const cancelBtn = document.getElementById('cancel-edit-btn');
     const categorySelect = document.getElementById('p-category');
+    const shopSettingsForm = document.getElementById('shop-settings-form');
+    const whatsappNumberInput = document.getElementById('shop-whatsapp-number');
+    const orderEmailInput = document.getElementById('shop-order-email');
+    const saveShopSettingsBtn = document.getElementById('save-shop-settings-btn');
     const validCategories = ['offers', 'serums', 'masks', 'eyes', 'creams'];
 
     // State: welches Produkt wird gerade bearbeitet (null = neues Produkt)
@@ -158,6 +162,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Formular befüllen
         document.getElementById('p-name').value = product.name || '';
         document.getElementById('p-desc').value = product.description || '';
+        document.getElementById('p-name-ar').value = product.nameAr || '';
+        document.getElementById('p-desc-ar').value = product.descriptionAr || '';
+        document.getElementById('p-name-en').value = product.nameEn || '';
+        document.getElementById('p-desc-en').value = product.descriptionEn || '';
+        document.getElementById('p-name-de').value = product.nameDe || '';
+        document.getElementById('p-desc-de').value = product.descriptionDe || '';
         document.getElementById('p-price-usd').value = ((product.priceUsdCents || 0) / 100).toFixed(2);
         document.getElementById('p-price-syp').value = product.priceSyp || 0;
         document.getElementById('p-sort-order').value = product.sortOrder ?? 0;
@@ -195,6 +205,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial check on load
     checkAuthState();
+
+    async function loadShopSettings() {
+        try {
+            const settings = await databases.getDocument('mais_beauty_db', 'shop_settings', 'main');
+            whatsappNumberInput.value = settings.whatsappNumber || '';
+            orderEmailInput.value = settings.orderEmail || '';
+        } catch (error) {
+            if (error.code === 404) {
+                try {
+                    await databases.createDocument('mais_beauty_db', 'shop_settings', 'main', {
+                        whatsappNumber: '',
+                        orderEmail: ''
+                    });
+                    whatsappNumberInput.value = '';
+                    orderEmailInput.value = '';
+                    return;
+                } catch (createError) {
+                    console.error('Error creating shop settings:', createError);
+                }
+            }
+
+            console.error('Error fetching shop settings:', error);
+        }
+    }
+
+    shopSettingsForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const whatsappNumber = whatsappNumberInput.value.trim().replace(/\s+/g, '').replace(/^\+/, '');
+        const orderEmail = orderEmailInput.value.trim();
+        saveShopSettingsBtn.disabled = true;
+
+        try {
+            const settings = await databases.updateDocument('mais_beauty_db', 'shop_settings', 'main', {
+                whatsappNumber,
+                orderEmail
+            });
+            whatsappNumberInput.value = settings.whatsappNumber || '';
+            orderEmailInput.value = settings.orderEmail || '';
+            alert('Shop Settings gespeichert.');
+        } catch (error) {
+            console.error('Error saving shop settings:', error);
+            alert('Shop Settings konnten nicht gespeichert werden.');
+        } finally {
+            saveShopSettingsBtn.disabled = false;
+        }
+    });
+
+    loadShopSettings();
 
     // Fetch products from Appwrite
     let products = [];
@@ -285,6 +343,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const category = validCategories.includes(categorySelect.value) ? categorySelect.value : 'offers';
         const active = document.getElementById('p-active').checked;
         const description = document.getElementById('p-desc').value.trim();
+        const nameAr = document.getElementById('p-name-ar').value.trim();
+        const descriptionAr = document.getElementById('p-desc-ar').value.trim();
+        const nameEn = document.getElementById('p-name-en').value.trim();
+        const descriptionEn = document.getElementById('p-desc-en').value.trim();
+        const nameDe = document.getElementById('p-name-de').value.trim();
+        const descriptionDe = document.getElementById('p-desc-de').value.trim();
         const fileInput = document.getElementById('p-image-file');
         const file = fileInput.files[0] || null;
 
@@ -301,7 +365,21 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             if (editProductId) {
                 // === BEARBEITEN-MODUS ===
-                const updateData = { name, description, priceUsdCents, priceSyp, sortOrder, category, active };
+                const updateData = {
+                    name,
+                    description,
+                    nameAr,
+                    descriptionAr,
+                    nameEn,
+                    descriptionEn,
+                    nameDe,
+                    descriptionDe,
+                    priceUsdCents,
+                    priceSyp,
+                    sortOrder,
+                    category,
+                    active
+                };
 
                 if (file) {
                     // Neues Bild: komprimieren, hochladen, URLs aktualisieren
@@ -339,6 +417,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const newProduct = {
                     name,
                     description,
+                    nameAr,
+                    descriptionAr,
+                    nameEn,
+                    descriptionEn,
+                    nameDe,
+                    descriptionDe,
                     priceUsdCents,
                     priceSyp,
                     imageFileId: upload.$id,
