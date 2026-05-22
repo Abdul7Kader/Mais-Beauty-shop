@@ -24,6 +24,19 @@ const appData = {
             eyes_title: "لزقات العين",
             creams_title: "كريمات الوجه",
             contact_us: "تواصل معنا",
+            about_us_title: "من نحن",
+            about_us_text: "Mais Beauty يقدم منتجات عناية بالبشرة أصلية مختارة بعناية من علامات ألمانية وأوروبية.",
+            contact_form_title: "تواصل معنا",
+            contact_name: "الاسم",
+            contact_customer_email: "البريد الإلكتروني",
+            contact_message: "الرسالة",
+            contact_name_placeholder: "اكتب اسمك",
+            contact_customer_email_placeholder: "name@example.com",
+            contact_message_placeholder: "اكتب رسالتك",
+            contact_submit: "إرسال الرسالة",
+            contact_missing_email_alert: "بريد التواصل غير مضبوط بعد.",
+            contact_required_alert: "يرجى إدخال الاسم والبريد الإلكتروني والرسالة.",
+            contact_subject: "استفسار تواصل - Mais Beauty",
             empty_category: "سيتم إضافة المنتجات قريباً...",
             add_to_cart: "إضافة للسلة",
             your_cart: "سلة المشتريات",
@@ -72,6 +85,19 @@ const appData = {
             eyes_title: "Eye Pads",
             creams_title: "Face Creams",
             contact_us: "Contact Us",
+            about_us_title: "About us",
+            about_us_text: "Mais Beauty offers carefully selected original skincare products from German and European brands.",
+            contact_form_title: "Contact",
+            contact_name: "Name",
+            contact_customer_email: "Your email",
+            contact_message: "Message",
+            contact_name_placeholder: "Enter your name",
+            contact_customer_email_placeholder: "name@example.com",
+            contact_message_placeholder: "Write your message",
+            contact_submit: "Send message",
+            contact_missing_email_alert: "The shop contact email is not configured yet.",
+            contact_required_alert: "Please enter your name, email and message.",
+            contact_subject: "Contact request - Mais Beauty",
             empty_category: "Products coming soon...",
             add_to_cart: "Add to Cart",
             your_cart: "Your Cart",
@@ -120,6 +146,19 @@ const appData = {
             eyes_title: "Augenpads",
             creams_title: "Cremes",
             contact_us: "Kontaktiere uns",
+            about_us_title: "Über uns",
+            about_us_text: "Mais Beauty bietet sorgfältig ausgewählte originale Hautpflegeprodukte deutscher und europäischer Marken.",
+            contact_form_title: "Kontakt",
+            contact_name: "Name",
+            contact_customer_email: "Ihre E-Mail",
+            contact_message: "Nachricht",
+            contact_name_placeholder: "Namen eingeben",
+            contact_customer_email_placeholder: "name@example.com",
+            contact_message_placeholder: "Nachricht eingeben",
+            contact_submit: "Nachricht senden",
+            contact_missing_email_alert: "Die Kontakt-E-Mail-Adresse des Shops ist noch nicht eingetragen.",
+            contact_required_alert: "Bitte Name, E-Mail und Nachricht eingeben.",
+            contact_subject: "Kontaktanfrage - Mais Beauty",
             empty_category: "Produkte folgen in Kürze...",
             add_to_cart: "In den Warenkorb",
             your_cart: "Warenkorb",
@@ -168,6 +207,7 @@ let cart = [];
 let activeProduct = null;
 let shopWhatsAppNumber = "";
 let shopOrderEmail = "";
+let shopContactEmail = "";
 
 const productGridIds = ["offers", "serums", "masks", "eyes", "creams"];
 const langSwitcher = document.getElementById("lang-switcher");
@@ -193,13 +233,16 @@ async function loadShopSettings() {
         );
         shopWhatsAppNumber = settings.whatsappNumber || "";
         shopOrderEmail = settings.orderEmail || "";
+        shopContactEmail = settings.contactEmail || "";
     } catch (error) {
         console.error("Appwrite shop settings load failed:", error);
         shopWhatsAppNumber = "";
         shopOrderEmail = "";
+        shopContactEmail = "";
     }
 
     updateCheckoutState();
+    updateContactState();
 }
 
 async function loadProducts() {
@@ -331,6 +374,7 @@ function setupEventListeners() {
     document.getElementById("checkout-btn")?.addEventListener("click", submitOrder);
     document.getElementById("email-checkout-btn")?.addEventListener("click", submitEmailOrder);
     document.getElementById("customer-country")?.addEventListener("change", updateCustomerPhoneHelp);
+    document.getElementById("footer-contact-form")?.addEventListener("submit", submitContactMessage);
 
     let lastScrollTop = 0;
     const navbar = document.querySelector(".navbar");
@@ -370,6 +414,7 @@ function updateTranslations() {
     });
     updateCustomerPhoneHelp();
     updateCheckoutState();
+    updateContactState();
 }
 
 function createEmptyMessage() {
@@ -518,16 +563,32 @@ function updateCartUI() {
 
     cart.forEach((item) => {
         const itemPrice = getProductPriceUsd(item);
+        const itemTotal = itemPrice * item.qty;
         totalUSD += itemPrice * item.qty;
         count += item.qty;
 
         const div = document.createElement("div");
         div.className = "cart-item";
         div.innerHTML = `
-            ${item.imageUrl ? `<img src="${item.imageUrl}" alt="">` : "<span></span>"}
-            <div>
+            <div class="cart-item-image">
+                ${item.imageUrl ? `<img src="${item.imageUrl}" alt="">` : "<span></span>"}
+            </div>
+            <div class="cart-item-details">
                 <h4>${getLocalizedProductText(item, "name") || "Mais Beauty"}</h4>
-                <p>${item.qty} x ${formatPrice(itemPrice)}</p>
+                <dl class="cart-item-summary">
+                    <div>
+                        <dt>${appData.translations[currentLang].whatsapp_quantity}</dt>
+                        <dd>${item.qty}</dd>
+                    </div>
+                    <div>
+                        <dt>${appData.translations[currentLang].whatsapp_unit_price}</dt>
+                        <dd>${formatPrice(itemPrice)}</dd>
+                    </div>
+                    <div>
+                        <dt>${appData.translations[currentLang].whatsapp_line_total}</dt>
+                        <dd>${formatPrice(itemTotal)}</dd>
+                    </div>
+                </dl>
             </div>
             <button class="remove-item" type="button" onclick="removeFromCart('${item.$id}')">&times;</button>
         `;
@@ -561,6 +622,43 @@ function updateCheckoutState() {
             ? ""
             : appData.translations[currentLang].missing_email_alert;
     }
+}
+
+function updateContactState() {
+    const contactSubmit = document.getElementById("footer-contact-submit");
+    if (!contactSubmit) return;
+
+    contactSubmit.disabled = !shopContactEmail;
+    contactSubmit.title = shopContactEmail
+        ? ""
+        : appData.translations[currentLang].contact_missing_email_alert;
+}
+
+function submitContactMessage(event) {
+    event.preventDefault();
+    const texts = appData.translations[currentLang];
+    const customerName = document.getElementById("footer-contact-name")?.value.trim() || "";
+    const customerEmail = document.getElementById("footer-contact-customer-email")?.value.trim() || "";
+    const message = document.getElementById("footer-contact-message")?.value.trim() || "";
+
+    if (!shopContactEmail) {
+        alert(texts.contact_missing_email_alert);
+        return;
+    }
+    if (!customerName || !customerEmail || !message) {
+        alert(texts.contact_required_alert);
+        return;
+    }
+
+    const body = [
+        `${texts.contact_name}: ${customerName}`,
+        `${texts.contact_customer_email}: ${customerEmail}`,
+        "",
+        `${texts.contact_message}:`,
+        message
+    ].join("\n");
+
+    window.location.href = `mailto:${shopContactEmail}?subject=${encodeURIComponent(texts.contact_subject)}&body=${encodeURIComponent(body)}`;
 }
 
 function getCustomerPhoneMode() {

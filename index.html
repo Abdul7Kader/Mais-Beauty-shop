@@ -27,6 +27,10 @@
             </nav>
 
             <div class="controls">
+                <button id="floating-cart-btn" class="floating-cart-btn navbar-cart-btn" aria-label="Open cart">
+                    <span class="cart-icon">🛒</span>
+                    <span id="cart-count" class="cart-count">0</span>
+                </button>
                 <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode" title="Toggle Dark/Light Mode">🌙</button>
                 <div class="switcher">
                     <select id="lang-switcher" aria-label="Language Switcher">
@@ -145,20 +149,25 @@
         </div>
     </div>
 
-    <!-- Floating Cart Button -->
-    <button id="floating-cart-btn" class="floating-cart-btn">
-        <span class="cart-icon">🛒</span>
-        <span id="cart-count" class="cart-count">0</span>
-    </button>
-
     <!-- Footer -->
     <footer class="footer">
         <div class="container footer-content">
-            <div class="contact-info">
-                <h4 data-i18n="contact_us">تواصل معنا</h4>
-                <p>Email: <a href="mailto:mais.elwan@gmail.com">mais.elwan@gmail.com</a></p>
-                <p>Instagram: <a href="https://www.instagram.com/mais_beauty_syria" target="_blank" rel="noopener noreferrer">@mais_beauty_syria</a></p>
-            </div>
+            <section class="footer-about">
+                <h4 data-i18n="about_us_title">من نحن</h4>
+                <p data-i18n="about_us_text">Mais Beauty يقدم منتجات عناية بالبشرة أصلية مختارة بعناية من علامات ألمانية وأوروبية.</p>
+            </section>
+            <section class="footer-contact">
+                <h4 data-i18n="contact_form_title">تواصل معنا</h4>
+                <form id="footer-contact-form" class="footer-contact-form">
+                    <label for="footer-contact-name" data-i18n="contact_name">الاسم</label>
+                    <input id="footer-contact-name" type="text" required data-i18n-placeholder="contact_name_placeholder" placeholder="اكتب اسمك">
+                    <label for="footer-contact-customer-email" data-i18n="contact_customer_email">البريد الإلكتروني</label>
+                    <input id="footer-contact-customer-email" type="email" required data-i18n-placeholder="contact_customer_email_placeholder" placeholder="name@example.com">
+                    <label for="footer-contact-message" data-i18n="contact_message">الرسالة</label>
+                    <textarea id="footer-contact-message" rows="4" required data-i18n-placeholder="contact_message_placeholder" placeholder="اكتب رسالتك"></textarea>
+                    <button id="footer-contact-submit" class="btn-primary" type="submit" data-i18n="contact_submit">إرسال الرسالة</button>
+                </form>
+            </section>
             <div class="copyright">
                 <p>&copy; 2026 Mais Beauty. All rights reserved. | <a href="admin.html" style="color: var(--color-text-light); text-decoration: underline;">Admin Panel</a></p>
             </div>

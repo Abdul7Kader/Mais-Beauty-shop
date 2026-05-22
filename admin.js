@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const shopSettingsForm = document.getElementById('shop-settings-form');
     const whatsappNumberInput = document.getElementById('shop-whatsapp-number');
     const orderEmailInput = document.getElementById('shop-order-email');
+    const contactEmailInput = document.getElementById('shop-contact-email');
     const saveShopSettingsBtn = document.getElementById('save-shop-settings-btn');
     const validCategories = ['offers', 'serums', 'masks', 'eyes', 'creams'];
 
@@ -211,15 +212,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const settings = await databases.getDocument('mais_beauty_db', 'shop_settings', 'main');
             whatsappNumberInput.value = settings.whatsappNumber || '';
             orderEmailInput.value = settings.orderEmail || '';
+            contactEmailInput.value = settings.contactEmail || '';
         } catch (error) {
             if (error.code === 404) {
                 try {
                     await databases.createDocument('mais_beauty_db', 'shop_settings', 'main', {
                         whatsappNumber: '',
-                        orderEmail: ''
+                        orderEmail: '',
+                        contactEmail: ''
                     });
                     whatsappNumberInput.value = '';
                     orderEmailInput.value = '';
+                    contactEmailInput.value = '';
                     return;
                 } catch (createError) {
                     console.error('Error creating shop settings:', createError);
@@ -234,15 +238,18 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         const whatsappNumber = whatsappNumberInput.value.trim().replace(/\s+/g, '').replace(/^\+/, '');
         const orderEmail = orderEmailInput.value.trim();
+        const contactEmail = contactEmailInput.value.trim();
         saveShopSettingsBtn.disabled = true;
 
         try {
             const settings = await databases.updateDocument('mais_beauty_db', 'shop_settings', 'main', {
                 whatsappNumber,
-                orderEmail
+                orderEmail,
+                contactEmail
             });
             whatsappNumberInput.value = settings.whatsappNumber || '';
             orderEmailInput.value = settings.orderEmail || '';
+            contactEmailInput.value = settings.contactEmail || '';
             alert('Shop Settings gespeichert.');
         } catch (error) {
             console.error('Error saving shop settings:', error);
