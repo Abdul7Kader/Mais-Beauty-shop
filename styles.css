@@ -610,7 +610,7 @@ a:hover {
 
 .cart-item {
     display: grid;
-    grid-template-columns: 84px minmax(0, 1fr);
+    grid-template-columns: 92px minmax(0, 1fr);
     gap: 0.9rem;
     align-items: start;
     padding: 0.9rem;
@@ -622,8 +622,8 @@ a:hover {
 .cart-item-image {
     display: grid;
     place-items: center;
-    width: 84px;
-    height: 96px;
+    width: 92px;
+    height: 104px;
     overflow: hidden;
     border: 1px solid var(--color-border);
     border-radius: 6px;
@@ -647,53 +647,48 @@ a:hover {
 }
 
 .cart-item-details h4 {
-    margin: 0 0 0.75rem;
+    margin: 0 0 0.45rem;
     color: var(--color-text-dark);
     line-height: 1.35;
     overflow-wrap: anywhere;
 }
 
-.cart-item-summary {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.45rem;
-    margin: 0;
-}
-
-.cart-item-summary div {
-    min-width: 0;
-    padding: 0.45rem;
-    border-radius: 6px;
-    background: var(--color-surface);
-}
-
-.cart-item-summary dt {
+.cart-unit-price,
+.cart-line-total {
+    margin: 0 0 0.55rem;
     color: var(--color-text-light);
-    font-size: 0.78rem;
-    font-weight: 700;
-    line-height: 1.25;
-}
-
-.cart-item-summary dd {
-    margin: 0.2rem 0 0;
-    color: var(--color-text-dark);
     font-size: 0.92rem;
     font-weight: 700;
-    line-height: 1.25;
+    line-height: 1.35;
+}
+
+.cart-line-total {
+    margin: 0.65rem 0 0;
+    color: var(--color-text-dark);
+}
+
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+    flex-wrap: wrap;
 }
 
 .cart-qty-controls {
-    display: grid;
-    grid-template-columns: 30px minmax(42px, 1fr) 30px;
-    gap: 0.25rem;
+    display: inline-grid;
+    grid-template-columns: 42px 54px 42px;
     align-items: center;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg);
 }
 
 .cart-qty-btn {
-    width: 30px;
-    height: 30px;
-    border: 1px solid var(--color-border);
-    border-radius: 50%;
+    width: 42px;
+    height: 38px;
+    border: 0;
     background: var(--color-surface);
     color: var(--color-text-dark);
     cursor: pointer;
@@ -702,17 +697,24 @@ a:hover {
     line-height: 1;
 }
 
+.cart-qty-btn:hover {
+    background: var(--color-gold);
+    color: white;
+}
+
 .cart-qty-input {
-    width: 100%;
+    width: 54px;
+    height: 38px;
     min-width: 0;
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
+    border: 0;
+    border-inline: 1px solid var(--color-border);
+    border-radius: 0;
     box-sizing: border-box;
     background: var(--color-bg);
     color: var(--color-text-dark);
     font: inherit;
     font-weight: 700;
-    padding: 0.35rem;
+    padding: 0;
     text-align: center;
 }
 
@@ -825,9 +827,9 @@ a:hover {
 .remove-item {
     width: auto;
     min-height: 36px;
-    padding: 0.45rem 0.85rem;
+    padding: 0.5rem 0.9rem;
     border: 1px solid var(--color-border);
-    border-radius: 999px;
+    border-radius: 8px;
     background: var(--color-surface);
     color: var(--color-text-dark);
     font: inherit;
@@ -835,7 +837,13 @@ a:hover {
     font-weight: 700;
     line-height: 1;
     cursor: pointer;
-    margin-top: 0.7rem;
+    margin-top: 0;
+}
+
+.remove-item:hover {
+    background: var(--color-gold);
+    border-color: var(--color-gold);
+    color: white;
 }
 
 /* Responsive Tablets and Mobile */
@@ -859,19 +867,29 @@ a:hover {
         padding: 0.75rem;
     }
     .cart-item {
-        grid-template-columns: 68px minmax(0, 1fr);
+        grid-template-columns: 74px minmax(0, 1fr);
         gap: 0.7rem;
         padding: 0.75rem;
     }
     .cart-item-image {
-        width: 68px;
-        height: 82px;
+        width: 74px;
+        height: 88px;
     }
     .cart-item-details h4 {
         margin-bottom: 0.55rem;
     }
-    .cart-item-summary {
-        grid-template-columns: 1fr;
+    .cart-item-actions {
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    .cart-qty-controls {
+        grid-template-columns: 38px 48px 38px;
+    }
+    .cart-qty-btn {
+        width: 38px;
+    }
+    .cart-qty-input {
+        width: 48px;
     }
     .main-nav ul {
         flex-wrap: wrap;

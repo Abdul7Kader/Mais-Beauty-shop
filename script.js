@@ -37,7 +37,7 @@ const appData = {
             contact_missing_email_alert: "بريد التواصل غير مضبوط بعد.",
             contact_required_alert: "يرجى إدخال الاسم والبريد الإلكتروني والرسالة.",
             contact_subject: "استفسار تواصل - Mais Beauty",
-            empty_category: "سيتم إضافة المنتجات قريباً...",
+            empty_category: "سيتم إضافة المنتجات قريباً…",
             add_to_cart: "إضافة للسلة",
             cart_added: "تمت الإضافة إلى السلة",
             go_to_cart: "الذهاب إلى السلة",
@@ -101,11 +101,11 @@ const appData = {
             contact_missing_email_alert: "The shop contact email is not configured yet.",
             contact_required_alert: "Please enter your name, email and message.",
             contact_subject: "Contact request - Mais Beauty",
-            empty_category: "Products coming soon...",
+            empty_category: "Products coming soon…",
             add_to_cart: "Add to Cart",
             cart_added: "Added to cart",
             go_to_cart: "Go to cart",
-            delete_item: "Delete",
+            delete_item: "Remove",
             your_cart: "Your Cart",
             total: "Total:",
             checkout: "Order now via WhatsApp",
@@ -165,11 +165,11 @@ const appData = {
             contact_missing_email_alert: "Die Kontakt-E-Mail-Adresse des Shops ist noch nicht eingetragen.",
             contact_required_alert: "Bitte Name, E-Mail und Nachricht eingeben.",
             contact_subject: "Kontaktanfrage - Mais Beauty",
-            empty_category: "Produkte folgen in Kürze...",
+            empty_category: "Produkte folgen in Kürze…",
             add_to_cart: "In den Warenkorb",
             cart_added: "Zum Warenkorb hinzugefügt",
             go_to_cart: "Zum Warenkorb",
-            delete_item: "Löschen",
+            delete_item: "Entfernen",
             your_cart: "Warenkorb",
             total: "Gesamt:",
             checkout: "Jetzt per WhatsApp bestellen",
@@ -217,6 +217,7 @@ let activeProduct = null;
 let shopWhatsAppNumber = "";
 let shopOrderEmail = "";
 let shopContactEmail = "";
+let cartQuantityInputTimer = null;
 
 const productGridIds = ["offers", "serums", "masks", "eyes", "creams"];
 const langSwitcher = document.getElementById("lang-switcher");
@@ -373,13 +374,17 @@ function setupEventListeners() {
         }
     });
 
-    document.getElementById("modal-add-to-cart")?.addEventListener("click", () => {
+    document.getElementById("modal-add-to-cart")?.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         if (!activeProduct) return;
         const qty = parseInt(document.getElementById("modal-qty")?.value || "1", 10);
         addToCart(activeProduct, qty);
         showModalCartFeedback();
     });
-    document.getElementById("modal-go-to-cart")?.addEventListener("click", () => {
+    document.getElementById("modal-go-to-cart")?.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         if (modal) modal.style.display = "none";
         cartSidebar?.classList.add("active");
     });
@@ -388,6 +393,9 @@ function setupEventListeners() {
     document.getElementById("email-checkout-btn")?.addEventListener("click", submitEmailOrder);
     document.getElementById("customer-country")?.addEventListener("change", updateCustomerPhoneHelp);
     document.getElementById("footer-contact-form")?.addEventListener("submit", submitContactMessage);
+    document.getElementById("cart-items")?.addEventListener("click", handleCartItemClick);
+    document.getElementById("cart-items")?.addEventListener("input", handleCartQuantityInput);
+    document.getElementById("cart-items")?.addEventListener("change", handleCartQuantityInput);
 
     let lastScrollTop = 0;
     const navbar = document.querySelector(".navbar");
@@ -570,7 +578,7 @@ function addToCart(product, qty) {
     if (existing) {
         existing.qty += safeQty;
     } else {
-        cart.push({ ...product, qty: safeQty });
+        cart.push(Object.assign({}, product, { qty: safeQty }));
     }
     updateCartUI();
 }
@@ -588,6 +596,7 @@ function updateCartUI() {
     cart.forEach((item) => {
         const itemPrice = getProductPriceUsd(item);
         const itemTotal = itemPrice * item.qty;
+        const productName = getLocalizedProductText(item, "name") || "Mais Beauty";
         totalUSD += itemPrice * item.qty;
         count += item.qty;
 
@@ -595,31 +604,20 @@ function updateCartUI() {
         div.className = "cart-item";
         div.innerHTML = `
             <div class="cart-item-image">
-                ${item.imageUrl ? `<img src="${item.imageUrl}" alt="">` : "<span></span>"}
+                ${item.imageUrl ? `<img src="${item.imageUrl}" alt="${productName}">` : "<span></span>"}
             </div>
             <div class="cart-item-details">
-                <h4>${getLocalizedProductText(item, "name") || "Mais Beauty"}</h4>
-                <dl class="cart-item-summary">
-                    <div>
-                        <dt>${appData.translations[currentLang].whatsapp_quantity}</dt>
-                        <dd>
-                            <div class="cart-qty-controls">
-                                <button class="cart-qty-btn" type="button" onclick="changeCartQuantity('${item.$id}', -1)" aria-label="Decrease quantity">-</button>
-                                <input class="cart-qty-input" type="number" min="1" value="${item.qty}" inputmode="numeric" onchange="setCartQuantity('${item.$id}', this.value)">
-                                <button class="cart-qty-btn" type="button" onclick="changeCartQuantity('${item.$id}', 1)" aria-label="Increase quantity">+</button>
-                            </div>
-                        </dd>
+                <h4>${productName}</h4>
+                <p class="cart-unit-price">${appData.translations[currentLang].whatsapp_unit_price}: ${formatPrice(itemPrice)}</p>
+                <div class="cart-item-actions">
+                    <div class="cart-qty-controls" aria-label="${appData.translations[currentLang].whatsapp_quantity}">
+                        <button class="cart-qty-btn" type="button" data-cart-action="decrease" data-product-id="${item.$id}" aria-label="Decrease quantity">-</button>
+                        <input class="cart-qty-input" type="number" min="1" value="${item.qty}" inputmode="numeric" data-product-id="${item.$id}">
+                        <button class="cart-qty-btn" type="button" data-cart-action="increase" data-product-id="${item.$id}" aria-label="Increase quantity">+</button>
                     </div>
-                    <div>
-                        <dt>${appData.translations[currentLang].whatsapp_unit_price}</dt>
-                        <dd>${formatPrice(itemPrice)}</dd>
-                    </div>
-                    <div>
-                        <dt>${appData.translations[currentLang].whatsapp_line_total}</dt>
-                        <dd>${formatPrice(itemTotal)}</dd>
-                    </div>
-                </dl>
-                <button class="remove-item" type="button" onclick="removeFromCart('${item.$id}')">${appData.translations[currentLang].delete_item}</button>
+                    <button class="remove-item" type="button" data-cart-action="remove" data-product-id="${item.$id}">${appData.translations[currentLang].delete_item}</button>
+                </div>
+                <p class="cart-line-total">${appData.translations[currentLang].whatsapp_line_total}: <strong>${formatPrice(itemTotal)}</strong></p>
             </div>
         `;
         cartItems.appendChild(div);
@@ -641,6 +639,39 @@ function changeCartQuantity(id, delta) {
     if (!item) return;
     item.qty = Math.max(1, item.qty + delta);
     updateCartUI();
+}
+
+function handleCartItemClick(event) {
+    const button = event.target.closest("[data-cart-action]");
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    const action = button.dataset.cartAction;
+    if (action === "remove") {
+        removeFromCart(button.dataset.productId);
+        return;
+    }
+
+    const delta = action === "increase" ? 1 : -1;
+    changeCartQuantity(button.dataset.productId, delta);
+}
+
+function handleCartQuantityInput(event) {
+    const input = event.target.closest(".cart-qty-input");
+    if (!input) return;
+    if (input.value.trim() === "") return;
+
+    if (event.type === "input") {
+        clearTimeout(cartQuantityInputTimer);
+        cartQuantityInputTimer = setTimeout(() => {
+            setCartQuantity(input.dataset.productId, input.value);
+        }, 250);
+        return;
+    }
+
+    clearTimeout(cartQuantityInputTimer);
+    setCartQuantity(input.dataset.productId, input.value);
 }
 
 function removeFromCart(id) {
@@ -857,7 +888,4 @@ function submitEmailOrder() {
     window.location.href = `mailto:${shopOrderEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
 }
 
-window.removeFromCart = removeFromCart;
-window.setCartQuantity = setCartQuantity;
-window.changeCartQuantity = changeCartQuantity;
 document.addEventListener("DOMContentLoaded", init);
