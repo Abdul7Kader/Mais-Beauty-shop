@@ -39,6 +39,9 @@ const appData = {
             contact_subject: "استفسار تواصل - Mais Beauty",
             empty_category: "سيتم إضافة المنتجات قريباً...",
             add_to_cart: "إضافة للسلة",
+            cart_added: "تمت الإضافة إلى السلة",
+            go_to_cart: "الذهاب إلى السلة",
+            delete_item: "حذف",
             your_cart: "سلة المشتريات",
             total: "الإجمالي:",
             checkout: "اطلب الآن عبر واتساب",
@@ -100,6 +103,9 @@ const appData = {
             contact_subject: "Contact request - Mais Beauty",
             empty_category: "Products coming soon...",
             add_to_cart: "Add to Cart",
+            cart_added: "Added to cart",
+            go_to_cart: "Go to cart",
+            delete_item: "Delete",
             your_cart: "Your Cart",
             total: "Total:",
             checkout: "Order now via WhatsApp",
@@ -161,6 +167,9 @@ const appData = {
             contact_subject: "Kontaktanfrage - Mais Beauty",
             empty_category: "Produkte folgen in Kürze...",
             add_to_cart: "In den Warenkorb",
+            cart_added: "Zum Warenkorb hinzugefügt",
+            go_to_cart: "Zum Warenkorb",
+            delete_item: "Löschen",
             your_cart: "Warenkorb",
             total: "Gesamt:",
             checkout: "Jetzt per WhatsApp bestellen",
@@ -368,7 +377,11 @@ function setupEventListeners() {
         if (!activeProduct) return;
         const qty = parseInt(document.getElementById("modal-qty")?.value || "1", 10);
         addToCart(activeProduct, qty);
+        showModalCartFeedback();
+    });
+    document.getElementById("modal-go-to-cart")?.addEventListener("click", () => {
         if (modal) modal.style.display = "none";
+        cartSidebar?.classList.add("active");
     });
 
     document.getElementById("checkout-btn")?.addEventListener("click", submitOrder);
@@ -492,8 +505,9 @@ function renderProducts() {
     });
 }
 
-function openModal(product) {
+function openModal(product, resetFeedback = true) {
     activeProduct = product;
+    if (resetFeedback) hideModalCartFeedback();
     const image = document.getElementById("modal-img");
     const imageUrl = product.imageUrl || "";
 
@@ -518,9 +532,19 @@ function openModal(product) {
     if (modal) modal.style.display = "block";
 }
 
+function showModalCartFeedback() {
+    const feedback = document.getElementById("modal-cart-feedback");
+    if (feedback) feedback.hidden = false;
+}
+
+function hideModalCartFeedback() {
+    const feedback = document.getElementById("modal-cart-feedback");
+    if (feedback) feedback.hidden = true;
+}
+
 function updateOpenModalLanguage() {
     if (!activeProduct || !modal || modal.style.display === "none") return;
-    openModal(activeProduct);
+    openModal(activeProduct, false);
 }
 
 function openImageLightbox() {
@@ -542,13 +566,13 @@ function closeImageLightbox() {
 
 function addToCart(product, qty) {
     const existing = cart.find((item) => item.$id === product.$id);
+    const safeQty = Math.max(1, Number(qty) || 1);
     if (existing) {
-        existing.qty += qty;
+        existing.qty += safeQty;
     } else {
-        cart.push({ ...product, qty });
+        cart.push({ ...product, qty: safeQty });
     }
     updateCartUI();
-    cartSidebar?.classList.add("active");
 }
 
 function updateCartUI() {
@@ -578,7 +602,13 @@ function updateCartUI() {
                 <dl class="cart-item-summary">
                     <div>
                         <dt>${appData.translations[currentLang].whatsapp_quantity}</dt>
-                        <dd>${item.qty}</dd>
+                        <dd>
+                            <div class="cart-qty-controls">
+                                <button class="cart-qty-btn" type="button" onclick="changeCartQuantity('${item.$id}', -1)" aria-label="Decrease quantity">-</button>
+                                <input class="cart-qty-input" type="number" min="1" value="${item.qty}" inputmode="numeric" onchange="setCartQuantity('${item.$id}', this.value)">
+                                <button class="cart-qty-btn" type="button" onclick="changeCartQuantity('${item.$id}', 1)" aria-label="Increase quantity">+</button>
+                            </div>
+                        </dd>
                     </div>
                     <div>
                         <dt>${appData.translations[currentLang].whatsapp_unit_price}</dt>
@@ -589,14 +619,28 @@ function updateCartUI() {
                         <dd>${formatPrice(itemTotal)}</dd>
                     </div>
                 </dl>
+                <button class="remove-item" type="button" onclick="removeFromCart('${item.$id}')">${appData.translations[currentLang].delete_item}</button>
             </div>
-            <button class="remove-item" type="button" onclick="removeFromCart('${item.$id}')">&times;</button>
         `;
         cartItems.appendChild(div);
     });
 
     cartCount.textContent = String(count);
     totalValue.textContent = formatPrice(totalUSD);
+}
+
+function setCartQuantity(id, value) {
+    const item = cart.find((cartItem) => cartItem.$id === id);
+    if (!item) return;
+    item.qty = Math.max(1, Number.parseInt(value, 10) || 1);
+    updateCartUI();
+}
+
+function changeCartQuantity(id, delta) {
+    const item = cart.find((cartItem) => cartItem.$id === id);
+    if (!item) return;
+    item.qty = Math.max(1, item.qty + delta);
+    updateCartUI();
 }
 
 function removeFromCart(id) {
@@ -814,4 +858,6 @@ function submitEmailOrder() {
 }
 
 window.removeFromCart = removeFromCart;
+window.setCartQuantity = setCartQuantity;
+window.changeCartQuantity = changeCartQuantity;
 document.addEventListener("DOMContentLoaded", init);

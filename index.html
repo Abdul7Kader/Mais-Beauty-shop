@@ -104,6 +104,10 @@
                     </div>
                     
                     <button id="modal-add-to-cart" class="btn-primary" data-i18n="add_to_cart">إضافة للسلة</button>
+                    <div id="modal-cart-feedback" class="modal-cart-feedback" hidden>
+                        <span data-i18n="cart_added">تمت الإضافة إلى السلة</span>
+                        <button id="modal-go-to-cart" class="link-btn" type="button" data-i18n="go_to_cart">الذهاب إلى السلة</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -120,31 +124,33 @@
             <h2 data-i18n="your_cart">سلة المشتريات</h2>
             <span class="close-cart">&times;</span>
         </div>
-        <div id="cart-items" class="cart-items">
-            <!-- Cart items will be rendered here -->
-        </div>
-        <div class="cart-footer">
-            <div class="checkout-fields">
-                <label for="customer-name" data-i18n="customer_name">اسم العميل</label>
-                <input id="customer-name" type="text" required data-i18n-placeholder="customer_name_placeholder" placeholder="اكتب اسمك">
-                <label for="customer-phone" data-i18n="customer_phone">رقم هاتف العميل</label>
-                <select id="customer-country" aria-label="Customer country code">
-                    <option value="+963">Syria +963</option>
-                    <option value="+49">Germany +49</option>
-                    <option value="" data-i18n="customer_country_other">Other</option>
-                </select>
-                <input id="customer-phone" type="tel" required placeholder="9XXXXXXXX">
-                <small class="phone-help" id="customer-phone-help">اكتب رقمك المحلي فقط، مثال: 9XXXXXXXX</small>
-                <label for="customer-note" data-i18n="order_note">ملاحظات أو رغبات</label>
-                <textarea id="customer-note" rows="3" data-i18n-placeholder="order_note_placeholder" placeholder="اختياري"></textarea>
+        <div class="cart-body">
+            <div id="cart-items" class="cart-items">
+                <!-- Cart items will be rendered here -->
             </div>
-            <div class="cart-total">
-                <span data-i18n="total">الإجمالي:</span>
-                <span id="cart-total-value">0</span>
-            </div>
-            <div class="checkout-actions">
-                <button id="checkout-btn" class="btn-primary" data-i18n="checkout">اطلب الآن عبر واتساب</button>
-                <button id="email-checkout-btn" class="btn-primary" data-i18n="email_checkout">اطلب عبر البريد الإلكتروني</button>
+            <div class="cart-footer">
+                <div class="checkout-fields">
+                    <label for="customer-name" data-i18n="customer_name">اسم العميل</label>
+                    <input id="customer-name" type="text" required data-i18n-placeholder="customer_name_placeholder" placeholder="اكتب اسمك">
+                    <label for="customer-phone" data-i18n="customer_phone">رقم هاتف العميل</label>
+                    <select id="customer-country" aria-label="Customer country code">
+                        <option value="+963">Syria +963</option>
+                        <option value="+49">Germany +49</option>
+                        <option value="" data-i18n="customer_country_other">Other</option>
+                    </select>
+                    <input id="customer-phone" type="tel" required placeholder="9XXXXXXXX">
+                    <small class="phone-help" id="customer-phone-help">اكتب رقمك المحلي فقط، مثال: 9XXXXXXXX</small>
+                    <label for="customer-note" data-i18n="order_note">ملاحظات أو رغبات</label>
+                    <textarea id="customer-note" rows="3" data-i18n-placeholder="order_note_placeholder" placeholder="اختياري"></textarea>
+                </div>
+                <div class="cart-total">
+                    <span data-i18n="total">الإجمالي:</span>
+                    <span id="cart-total-value">0</span>
+                </div>
+                <div class="checkout-actions">
+                    <button id="checkout-btn" class="btn-primary" data-i18n="checkout">اطلب الآن عبر واتساب</button>
+                    <button id="email-checkout-btn" class="btn-primary" data-i18n="email_checkout">اطلب عبر البريد الإلكتروني</button>
+                </div>
             </div>
         </div>
     </div>
