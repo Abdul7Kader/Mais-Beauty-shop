@@ -458,6 +458,8 @@ function renderProducts() {
         if (!grid) return;
 
         grid.innerHTML = "";
+        const section = grid.closest(".products-section");
+        if (section) section.hidden = false;
     });
 
     const visibleProducts = appData.products
@@ -511,7 +513,8 @@ function renderProducts() {
     productGridIds.forEach((category) => {
         const grid = document.getElementById(`${category}-grid`);
         if (grid && grid.children.length === 0) {
-            grid.appendChild(createEmptyMessage());
+            const section = grid.closest(".products-section");
+            if (section) section.hidden = true;
         }
     });
 }
