@@ -576,10 +576,11 @@ function closeImageLightbox() {
 }
 
 function getCartStorageItem(product) {
-    if (!product || !product.$id) return null;
+    const productId = product?.$id || product?.id || "";
+    if (!productId) return null;
 
     return {
-        $id: product.$id,
+        $id: productId,
         name: product.name || "",
         description: product.description || "",
         nameAr: product.nameAr || "",
@@ -604,14 +605,17 @@ function loadCartFromStorage() {
         if (!Array.isArray(parsedCart)) {
             cart = [];
             localStorage.removeItem(CART_STORAGE_KEY);
+            console.log("Cart storage parse failed");
             return;
         }
 
         cart = parsedCart
             .map(getCartStorageItem)
             .filter(Boolean);
+        console.log("Cart loaded from storage");
     } catch (error) {
         cart = [];
+        console.log("Cart storage parse failed");
         try {
             localStorage.removeItem(CART_STORAGE_KEY);
         } catch (storageError) {
@@ -631,12 +635,9 @@ function saveCartToStorage() {
         } else {
             localStorage.removeItem(CART_STORAGE_KEY);
         }
+        console.log("Cart saved to storage");
     } catch (error) {
-        try {
-            localStorage.removeItem(CART_STORAGE_KEY);
-        } catch (storageError) {
-            return;
-        }
+        console.log("Cart storage save failed");
     }
 }
 
