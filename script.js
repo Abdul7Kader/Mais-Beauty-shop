@@ -6,6 +6,7 @@ const APPWRITE_DATABASE_ID = "mais_beauty_db";
 const APPWRITE_PRODUCTS_COLLECTION_ID = "products";
 const APPWRITE_SETTINGS_COLLECTION_ID = "shop_settings";
 const APPWRITE_SETTINGS_DOCUMENT_ID = "main";
+const CART_STORAGE_KEY = "maisBeautyCart";
 
 const client = new Client()
     .setEndpoint(APPWRITE_ENDPOINT)
@@ -230,6 +231,8 @@ function init() {
     initTheme();
     setupEventListeners();
     updateTranslations();
+    loadCartFromStorage();
+    updateCartUI();
     loadShopSettings();
     loadProducts();
 }
@@ -572,6 +575,71 @@ function closeImageLightbox() {
     imageLightbox.setAttribute("aria-hidden", "true");
 }
 
+function getCartStorageItem(product) {
+    if (!product || !product.$id) return null;
+
+    return {
+        $id: product.$id,
+        name: product.name || "",
+        description: product.description || "",
+        nameAr: product.nameAr || "",
+        nameEn: product.nameEn || "",
+        nameDe: product.nameDe || "",
+        descriptionAr: product.descriptionAr || "",
+        descriptionEn: product.descriptionEn || "",
+        descriptionDe: product.descriptionDe || "",
+        priceUsdCents: Number(product.priceUsdCents) || 0,
+        imageUrl: product.imageUrl || "",
+        category: product.category || "",
+        qty: Math.max(1, Number.parseInt(product.qty, 10) || 1)
+    };
+}
+
+function loadCartFromStorage() {
+    try {
+        const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+        if (!storedCart) return;
+
+        const parsedCart = JSON.parse(storedCart);
+        if (!Array.isArray(parsedCart)) {
+            cart = [];
+            localStorage.removeItem(CART_STORAGE_KEY);
+            return;
+        }
+
+        cart = parsedCart
+            .map(getCartStorageItem)
+            .filter(Boolean);
+    } catch (error) {
+        cart = [];
+        try {
+            localStorage.removeItem(CART_STORAGE_KEY);
+        } catch (storageError) {
+            cart = [];
+        }
+    }
+}
+
+function saveCartToStorage() {
+    try {
+        const cartPayload = cart
+            .map(getCartStorageItem)
+            .filter(Boolean);
+
+        if (cartPayload.length) {
+            localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartPayload));
+        } else {
+            localStorage.removeItem(CART_STORAGE_KEY);
+        }
+    } catch (error) {
+        try {
+            localStorage.removeItem(CART_STORAGE_KEY);
+        } catch (storageError) {
+            return;
+        }
+    }
+}
+
 function addToCart(product, qty) {
     const existing = cart.find((item) => item.$id === product.$id);
     const safeQty = Math.max(1, Number(qty) || 1);
@@ -580,6 +648,7 @@ function addToCart(product, qty) {
     } else {
         cart.push(Object.assign({}, product, { qty: safeQty }));
     }
+    saveCartToStorage();
     updateCartUI();
 }
 
@@ -631,6 +700,7 @@ function setCartQuantity(id, value) {
     const item = cart.find((cartItem) => cartItem.$id === id);
     if (!item) return;
     item.qty = Math.max(1, Number.parseInt(value, 10) || 1);
+    saveCartToStorage();
     updateCartUI();
 }
 
@@ -638,6 +708,7 @@ function changeCartQuantity(id, delta) {
     const item = cart.find((cartItem) => cartItem.$id === id);
     if (!item) return;
     item.qty = Math.max(1, item.qty + delta);
+    saveCartToStorage();
     updateCartUI();
 }
 
@@ -677,6 +748,7 @@ function handleCartQuantityInput(event) {
 function removeFromCart(id) {
     if (!confirm(appData.translations[currentLang].remove_cart_confirm)) return;
     cart = cart.filter((item) => item.$id !== id);
+    saveCartToStorage();
     updateCartUI();
 }
 
