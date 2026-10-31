@@ -2,111 +2,263 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Mais Beauty - Skincare</title>
+    <meta name="description" content="Mais Beauty - original German skincare: serums, face masks, eye pads and creams. Order easily via WhatsApp or email.">
+    <meta name="theme-color" content="#FAF4EF">
+    <link rel="icon" href="assets/logo.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=6">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=7">
+    <script>
+        /* Apply saved theme and language before first paint to avoid flashing. */
+        (function () {
+            try {
+                var theme = localStorage.getItem("beauty_store_theme");
+                if (!theme) theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+                document.documentElement.setAttribute("data-theme", theme === "dark" ? "dark" : "light");
+                var lang = localStorage.getItem("beauty_store_lang");
+                if (lang === "en" || lang === "de" || lang === "ar") {
+                    document.documentElement.lang = lang;
+                    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+                }
+            } catch (e) {}
+        })();
+    </script>
 </head>
 <body>
-    <!-- Navbar -->
-    <header class="navbar">
-        <div class="container nav-content">
-            <div class="logo">
-                <h1 data-i18n="logo">Mais Beauty</h1>
-            </div>
-            
-            <nav class="main-nav">
-                <ul>
-                    <li><a href="#serums-section" data-i18n="serums_title">سيرومات</a></li>
-                    <li><a href="#masks-section" data-i18n="masks_title">ماسكات</a></li>
-                    <li><a href="#eyes-section" data-i18n="eyes_title">لزقات عين</a></li>
-                    <li><a href="#creams-section" data-i18n="creams_title">كريمات</a></li>
-                </ul>
-            </nav>
+    <!-- Icon sprite -->
+    <svg class="sprite" aria-hidden="true" focusable="false">
+        <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
+        <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 13.2A8.5 8.5 0 1 1 10.8 3.5a6.8 6.8 0 0 0 9.7 9.7z"/></symbol>
+        <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></symbol>
+        <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+        <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+        <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.5 11.6a8.6 8.6 0 0 1-12.7 7.5L3.5 20.5l1.4-4.2a8.6 8.6 0 1 1 15.6-4.7z"/><path d="M9.2 8.2c-.4 2.9 2.6 6.4 5.9 6.6l1.1-1.4-1.9-1.1-.9.7c-1-.4-2.1-1.5-2.5-2.5l.7-.9-1-1.9z"/></symbol>
+        <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/></symbol>
+        <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
+        <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.6-3 7.9-7 9.5-4-1.6-7-4.9-7-9.5V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
+        <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5h16v10H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></symbol>
+        <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/></symbol>
+        <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M11 8.5v5M8.5 11h5"/></symbol>
+        <symbol id="i-note" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></symbol>
+        <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5l1.9 5.6 5.6 1.9-5.6 1.9-1.9 5.6-1.9-5.6-5.6-1.9 5.6-1.9z"/></symbol>
+    </svg>
 
-            <div class="controls">
-                <button id="floating-cart-btn" class="floating-cart-btn navbar-cart-btn" aria-label="Open cart">
-                    <span class="cart-icon">🛒</span>
-                    <span id="cart-count" class="cart-count">0</span>
-                </button>
-                <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode" title="Toggle Dark/Light Mode">🌙</button>
-                <div class="switcher">
-                    <select id="lang-switcher" aria-label="Language Switcher">
+    <a class="skip-link" href="#shop" data-i18n="skip_to_products">تخطي إلى المنتجات</a>
+
+    <!-- Header -->
+    <header class="site-header" id="site-header">
+        <div class="container header-row">
+            <a class="brand" href="#top" aria-label="Mais Beauty">
+                <span class="brand-mark"><img src="assets/logo.jpg" alt="" width="40" height="40"></span>
+                <span class="brand-name">Mais Beauty</span>
+            </a>
+
+            <div class="header-actions">
+                <label class="lang-select">
+                    <svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg>
+                    <select id="lang-switcher" aria-label="Language">
                         <option value="ar">العربية</option>
                         <option value="en">English</option>
                         <option value="de">Deutsch</option>
                     </select>
-                </div>
+                </label>
+                <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle dark mode">
+                    <svg class="icon icon-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+                    <svg class="icon icon-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+                </button>
+                <button id="floating-cart-btn" class="cart-btn" type="button" aria-label="Open cart" aria-controls="cart-sidebar" aria-expanded="false">
+                    <svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg>
+                    <span class="cart-btn-label" data-i18n="cart_short">السلة</span>
+                    <span id="cart-count" class="cart-count" data-count="0">0</span>
+                </button>
             </div>
         </div>
+
+        <nav class="category-nav" aria-label="Categories">
+            <div class="container">
+                <ul class="category-chips" id="category-chips">
+                    <li><a href="#offers-section" data-section="offers" data-i18n="offers_title">العروض الخاصة</a></li>
+                    <li><a href="#serums-section" data-section="serums" data-i18n="serums_title">سيرومات</a></li>
+                    <li><a href="#masks-section" data-section="masks" data-i18n="masks_title">ماسكات</a></li>
+                    <li><a href="#eyes-section" data-section="eyes" data-i18n="eyes_title">لزقات عين</a></li>
+                    <li><a href="#creams-section" data-section="creams" data-i18n="creams_title">كريمات</a></li>
+                </ul>
+            </div>
+        </nav>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container hero-content">
-            <img src="assets/logo.jpg" alt="Mais Beauty Logo" class="hero-logo">
-            <p class="hero-tagline" data-i18n="hero_tagline">جمالك يبدأ من هنا - منتجات ألمانية أصلية</p>
+    <main id="top">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="container hero-grid">
+                <div class="hero-copy">
+                    <p class="eyebrow" data-i18n="hero_eyebrow">عناية بالبشرة · منتجات ألمانية أصلية</p>
+                    <h1 class="hero-title" data-i18n="hero_title">بشرة صحية تبدأ بمنتجات تثق بها</h1>
+                    <p class="hero-tagline" data-i18n="hero_tagline">جمالك يبدأ من هنا - منتجات ألمانية أصلية</p>
+                    <div class="hero-ctas">
+                        <a href="#shop" class="btn btn-primary btn-lg">
+                            <span data-i18n="hero_cta">تسوق الآن</span>
+                            <svg class="icon icon-dir" aria-hidden="true"><use href="#i-arrow"/></svg>
+                        </a>
+                        <a href="#how-to-order" class="btn btn-ghost btn-lg" data-i18n="hero_cta_secondary">كيف أطلب؟</a>
+                    </div>
+                </div>
+                <div class="hero-visual" aria-hidden="true">
+                    <div class="hero-arch">
+                        <img src="assets/hero_skincare_bg_1778099266158.png" alt="" fetchpriority="high">
+                    </div>
+                    <div class="hero-seal">
+                        <img src="assets/logo.jpg" alt="">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- USP strip -->
+        <section class="usp-strip" aria-label="Benefits">
+            <div class="container usp-grid">
+                <div class="usp">
+                    <span class="usp-icon"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>
+                    <div>
+                        <h2 data-i18n="usp_original_title">منتجات أصلية 100%</h2>
+                        <p data-i18n="usp_original_text">مختارة بعناية من علامات ألمانية وأوروبية</p>
+                    </div>
+                </div>
+                <div class="usp">
+                    <span class="usp-icon"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+                    <div>
+                        <h2 data-i18n="usp_order_title">طلب خلال دقيقة</h2>
+                        <p data-i18n="usp_order_text">عبر واتساب أو البريد الإلكتروني، بدون تسجيل</p>
+                    </div>
+                </div>
+                <div class="usp">
+                    <span class="usp-icon"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg></span>
+                    <div>
+                        <h2 data-i18n="usp_personal_title">تواصل شخصي</h2>
+                        <p data-i18n="usp_personal_text">بدون دفع إلكتروني - نؤكد طلبك معك مباشرة</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="shop" class="shop" tabindex="-1">
+            <section class="products-section container" id="offers-section" aria-labelledby="offers-heading">
+                <div class="section-head">
+                    <h2 class="section-title" id="offers-heading" data-i18n="offers_title">العروض الخاصة</h2>
+                    <span class="section-count" data-count-for="offers"></span>
+                </div>
+                <div class="products-grid" id="offers-grid"></div>
+            </section>
+
+            <section class="products-section container" id="serums-section" aria-labelledby="serums-heading">
+                <div class="section-head">
+                    <h2 class="section-title" id="serums-heading" data-i18n="serums_title">السيرومات</h2>
+                    <span class="section-count" data-count-for="serums"></span>
+                </div>
+                <div class="products-grid" id="serums-grid"></div>
+            </section>
+
+            <section class="products-section container" id="masks-section" aria-labelledby="masks-heading">
+                <div class="section-head">
+                    <h2 class="section-title" id="masks-heading" data-i18n="masks_title">الماسكات</h2>
+                    <span class="section-count" data-count-for="masks"></span>
+                </div>
+                <div class="products-grid" id="masks-grid"></div>
+            </section>
+
+            <section class="products-section container" id="eyes-section" aria-labelledby="eyes-heading">
+                <div class="section-head">
+                    <h2 class="section-title" id="eyes-heading" data-i18n="eyes_title">لزقات العين</h2>
+                    <span class="section-count" data-count-for="eyes"></span>
+                </div>
+                <div class="products-grid" id="eyes-grid"></div>
+            </section>
+
+            <section class="products-section container" id="creams-section" aria-labelledby="creams-heading">
+                <div class="section-head">
+                    <h2 class="section-title" id="creams-heading" data-i18n="creams_title">الكريمات</h2>
+                    <span class="section-count" data-count-for="creams"></span>
+                </div>
+                <div class="products-grid" id="creams-grid"></div>
+            </section>
         </div>
-    </section>
 
-    <!-- Offers Section -->
-    <section class="products-section container" id="offers-section">
-        <h3 class="section-title" data-i18n="offers_title">العروض الخاصة</h3>
-        <div class="products-grid" id="offers-grid"></div>
-    </section>
-
-    <!-- Serums Section -->
-    <section class="products-section container" id="serums-section">
-        <h3 class="section-title" data-i18n="serums_title">قسم السيرومات</h3>
-        <div class="products-grid" id="serums-grid"></div>
-    </section>
-
-    <!-- Masks Section -->
-    <section class="products-section container" id="masks-section">
-        <h3 class="section-title" data-i18n="masks_title">قسم الماسكات</h3>
-        <div class="products-grid" id="masks-grid"></div>
-    </section>
-
-    <!-- Eye Care Section -->
-    <section class="products-section container" id="eyes-section">
-        <h3 class="section-title" data-i18n="eyes_title">لزقات تحت العين</h3>
-        <div class="products-grid" id="eyes-grid"></div>
-    </section>
-
-    <!-- Creams Section -->
-    <section class="products-section container" id="creams-section">
-        <h3 class="section-title" data-i18n="creams_title">قسم الكريمات</h3>
-        <div class="products-grid" id="creams-grid"></div>
-    </section>
+        <!-- How to order -->
+        <section class="how-to-order" id="how-to-order" aria-labelledby="steps-heading">
+            <div class="container">
+                <p class="eyebrow center" data-i18n="steps_eyebrow">بسيط وسريع</p>
+                <h2 class="section-title center" id="steps-heading" data-i18n="steps_title">اطلب في 3 خطوات</h2>
+                <ol class="steps">
+                    <li class="step">
+                        <span class="step-num">1</span>
+                        <h3 data-i18n="step1_title">اختر منتجاتك</h3>
+                        <p data-i18n="step1_text">أضف المنتجات إلى السلة بنقرة واحدة.</p>
+                    </li>
+                    <li class="step">
+                        <span class="step-num">2</span>
+                        <h3 data-i18n="step2_title">أدخل اسمك ورقمك</h3>
+                        <p data-i18n="step2_text">الاسم ورقم الهاتف فقط - بدون حساب أو تسجيل.</p>
+                    </li>
+                    <li class="step">
+                        <span class="step-num">3</span>
+                        <h3 data-i18n="step3_title">أرسل الطلب</h3>
+                        <p data-i18n="step3_text">عبر واتساب أو البريد الإلكتروني - رسالة الطلب جاهزة تلقائياً.</p>
+                    </li>
+                </ol>
+            </div>
+        </section>
+    </main>
 
     <!-- Product Modal -->
-    <div id="product-modal" class="modal">
+    <div id="product-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
+        <div class="modal-backdrop" data-close-modal></div>
         <div class="modal-content">
-            <span class="close-modal">&times;</span>
+            <button type="button" class="icon-btn close-modal" aria-label="Close" data-close-modal>
+                <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+            </button>
             <div class="modal-body">
                 <div class="modal-image-container">
                     <img id="modal-img" src="" alt="" tabindex="0">
+                    <span class="zoom-hint" aria-hidden="true"><svg class="icon"><use href="#i-zoom"/></svg></span>
                 </div>
                 <div class="modal-details">
+                    <p class="eyebrow" id="modal-category"></p>
                     <h2 id="modal-title"></h2>
                     <p id="modal-price" class="modal-price"></p>
                     <div id="modal-desc" class="modal-desc"></div>
-                    
-                    <div class="quantity-selector">
-                        <label for="modal-qty" data-i18n="quantity">الكمية:</label>
-                        <div class="qty-controls">
-                            <button class="qty-btn minus">-</button>
-                            <input type="number" id="modal-qty" value="1" min="1">
-                            <button class="qty-btn plus">+</button>
+                    <p id="modal-in-cart" class="modal-in-cart" hidden></p>
+
+                    <div class="modal-buy">
+                        <div class="quantity-selector">
+                            <label for="modal-qty" class="visually-hidden" data-i18n="quantity">الكمية:</label>
+                            <div class="stepper stepper-lg">
+                                <button class="qty-btn minus" type="button" aria-label="-"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button>
+                                <input type="number" id="modal-qty" value="1" min="1" inputmode="numeric">
+                                <button class="qty-btn plus" type="button" aria-label="+"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
+                            </div>
                         </div>
+                        <button id="modal-add-to-cart" class="btn btn-primary btn-lg" type="button">
+                            <svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg>
+                            <span data-i18n="add_to_cart">إضافة للسلة</span>
+                            <span class="btn-price" id="modal-add-price"></span>
+                        </button>
                     </div>
-                    
-                    <button id="modal-add-to-cart" class="btn-primary" data-i18n="add_to_cart">إضافة للسلة</button>
                     <div id="modal-cart-feedback" class="modal-cart-feedback" hidden>
-                        <span data-i18n="cart_added">تمت الإضافة إلى السلة</span>
-                        <button id="modal-go-to-cart" class="link-btn" type="button" data-i18n="go_to_cart">الذهاب إلى السلة</button>
+                        <p class="feedback-msg">
+                            <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+                            <span data-i18n="cart_added">تمت الإضافة إلى السلة</span>
+                        </p>
+                        <div class="feedback-actions">
+                            <button id="modal-go-to-cart" class="btn btn-primary" type="button" data-i18n="go_to_cart">الذهاب إلى السلة</button>
+                            <button id="modal-continue" class="btn btn-ghost" type="button" data-i18n="continue_shopping">متابعة التسوق</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -114,73 +266,154 @@
     </div>
 
     <div id="image-lightbox" class="image-lightbox" aria-hidden="true">
-        <button type="button" class="close-lightbox" aria-label="Close zoom">&times;</button>
+        <button type="button" class="icon-btn close-lightbox" aria-label="Close zoom">
+            <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+        </button>
         <img id="lightbox-img" src="" alt="">
     </div>
 
-    <!-- Cart Sidebar -->
-    <div id="cart-sidebar" class="cart-sidebar">
+    <!-- Cart Drawer -->
+    <div id="cart-overlay" class="cart-overlay" hidden></div>
+    <aside id="cart-sidebar" class="cart-sidebar" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true">
         <div class="cart-header">
-            <h2 data-i18n="your_cart">سلة المشتريات</h2>
-            <span class="close-cart">&times;</span>
+            <h2 id="cart-title">
+                <span data-i18n="your_cart">سلة المشتريات</span>
+                <span class="cart-title-count" id="cart-title-count"></span>
+            </h2>
+            <button type="button" class="icon-btn close-cart" aria-label="Close cart">
+                <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+            </button>
         </div>
+
         <div class="cart-body">
-            <div id="cart-items" class="cart-items">
-                <!-- Cart items will be rendered here -->
+            <div id="cart-empty" class="cart-empty">
+                <span class="cart-empty-icon"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg></span>
+                <h3 data-i18n="cart_empty_title">سلتك فارغة</h3>
+                <p data-i18n="cart_empty_text">اكتشف منتجاتنا وأضف ما يعجبك بنقرة واحدة.</p>
+                <button type="button" class="btn btn-primary" id="cart-start-shopping" data-i18n="start_shopping">ابدأ التسوق</button>
             </div>
-            <div class="cart-footer">
-                <div class="checkout-fields">
+
+            <div id="cart-items" class="cart-items"></div>
+
+            <form class="checkout-fields" id="checkout-form" novalidate>
+                <h3 class="checkout-heading" data-i18n="your_details">بياناتك</h3>
+                <div class="field">
                     <label for="customer-name" data-i18n="customer_name">اسم العميل</label>
-                    <input id="customer-name" type="text" required data-i18n-placeholder="customer_name_placeholder" placeholder="اكتب اسمك">
+                    <input id="customer-name" type="text" required autocomplete="name" data-i18n-placeholder="customer_name_placeholder" placeholder="اكتب اسمك">
+                    <p class="field-error" id="customer-name-error" hidden></p>
+                </div>
+                <div class="field">
                     <label for="customer-phone" data-i18n="customer_phone">رقم هاتف العميل</label>
-                    <select id="customer-country" aria-label="Customer country code">
-                        <option value="+963">Syria +963</option>
-                        <option value="+49">Germany +49</option>
-                        <option value="" data-i18n="customer_country_other">Other</option>
-                    </select>
-                    <input id="customer-phone" type="tel" required placeholder="9XXXXXXXX">
+                    <div class="phone-group" dir="ltr">
+                        <select id="customer-country" aria-label="Customer country code">
+                            <option value="+963">SY +963</option>
+                            <option value="+49">DE +49</option>
+                            <option value="" data-i18n="customer_country_other">Other</option>
+                        </select>
+                        <input id="customer-phone" type="tel" required autocomplete="tel-national" inputmode="tel" placeholder="9XXXXXXXX">
+                    </div>
                     <small class="phone-help" id="customer-phone-help">اكتب رقمك المحلي فقط، مثال: 9XXXXXXXX</small>
-                    <label for="customer-note" data-i18n="order_note">ملاحظات أو رغبات</label>
+                    <p class="field-error" id="customer-phone-error" hidden></p>
+                </div>
+                <details class="note-toggle" id="note-toggle">
+                    <summary>
+                        <svg class="icon" aria-hidden="true"><use href="#i-note"/></svg>
+                        <span data-i18n="add_note">إضافة ملاحظة</span>
+                    </summary>
+                    <label for="customer-note" class="visually-hidden" data-i18n="order_note">ملاحظات أو رغبات</label>
                     <textarea id="customer-note" rows="3" data-i18n-placeholder="order_note_placeholder" placeholder="اختياري"></textarea>
-                </div>
-                <div class="cart-total">
-                    <span data-i18n="total">الإجمالي:</span>
-                    <span id="cart-total-value">0</span>
-                </div>
-                <div class="checkout-actions">
-                    <button id="checkout-btn" class="btn-primary" data-i18n="checkout">اطلب الآن عبر واتساب</button>
-                    <button id="email-checkout-btn" class="btn-primary" data-i18n="email_checkout">اطلب عبر البريد الإلكتروني</button>
-                </div>
-            </div>
+                </details>
+            </form>
         </div>
-    </div>
+
+        <div class="cart-footer" id="cart-footer">
+            <div class="cart-total">
+                <span data-i18n="total">الإجمالي:</span>
+                <span id="cart-total-value">0</span>
+            </div>
+            <p class="checkout-error" id="checkout-error" role="alert" hidden></p>
+            <div class="checkout-actions">
+                <button id="checkout-btn" class="btn btn-whatsapp btn-lg" type="button">
+                    <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
+                    <span data-i18n="checkout">اطلب الآن عبر واتساب</span>
+                </button>
+                <button id="email-checkout-btn" class="btn btn-outline" type="button">
+                    <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>
+                    <span data-i18n="email_checkout">اطلب عبر البريد الإلكتروني</span>
+                </button>
+            </div>
+            <p class="checkout-hint" data-i18n="checkout_hint">لا يوجد دفع إلكتروني. سيتم فتح رسالة الطلب جاهزة للإرسال.</p>
+        </div>
+    </aside>
+
+    <!-- Mobile sticky cart bar -->
+    <button type="button" id="mobile-cart-bar" class="mobile-cart-bar" hidden>
+        <span class="mcb-left">
+            <span class="mcb-icon">
+                <svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg>
+                <span class="mcb-count" id="mcb-count">0</span>
+            </span>
+            <span class="mcb-total" id="mcb-total">$0.00</span>
+        </span>
+        <span class="mcb-cta">
+            <span data-i18n="checkout_now">إتمام الطلب</span>
+            <svg class="icon icon-dir" aria-hidden="true"><use href="#i-arrow"/></svg>
+        </span>
+    </button>
+
+    <!-- Toasts -->
+    <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="container footer-content">
             <section class="footer-about">
-                <h4 data-i18n="about_us_title">من نحن</h4>
+                <a class="brand" href="#top" aria-label="Mais Beauty">
+                    <span class="brand-mark"><img src="assets/logo.jpg" alt="" width="40" height="40" loading="lazy"></span>
+                    <span class="brand-name">Mais Beauty</span>
+                </a>
+                <h2 class="footer-heading" data-i18n="about_us_title">من نحن</h2>
                 <p data-i18n="about_us_text">Mais Beauty يقدم منتجات عناية بالبشرة أصلية مختارة بعناية من علامات ألمانية وأوروبية.</p>
+                <ul class="footer-links">
+                    <li><a href="#offers-section" data-i18n="offers_title">العروض الخاصة</a></li>
+                    <li><a href="#serums-section" data-i18n="serums_title">سيرومات</a></li>
+                    <li><a href="#masks-section" data-i18n="masks_title">ماسكات</a></li>
+                    <li><a href="#eyes-section" data-i18n="eyes_title">لزقات عين</a></li>
+                    <li><a href="#creams-section" data-i18n="creams_title">كريمات</a></li>
+                </ul>
             </section>
             <section class="footer-contact">
-                <h4 data-i18n="contact_form_title">تواصل معنا</h4>
+                <h2 class="footer-heading" data-i18n="contact_form_title">تواصل معنا</h2>
                 <form id="footer-contact-form" class="footer-contact-form">
-                    <label for="footer-contact-name" data-i18n="contact_name">الاسم</label>
-                    <input id="footer-contact-name" type="text" required data-i18n-placeholder="contact_name_placeholder" placeholder="اكتب اسمك">
-                    <label for="footer-contact-customer-email" data-i18n="contact_customer_email">البريد الإلكتروني</label>
-                    <input id="footer-contact-customer-email" type="email" required data-i18n-placeholder="contact_customer_email_placeholder" placeholder="name@example.com">
-                    <label for="footer-contact-message" data-i18n="contact_message">الرسالة</label>
-                    <textarea id="footer-contact-message" rows="4" required data-i18n-placeholder="contact_message_placeholder" placeholder="اكتب رسالتك"></textarea>
-                    <button id="footer-contact-submit" class="btn-primary" type="submit" data-i18n="contact_submit">إرسال الرسالة</button>
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="footer-contact-name" data-i18n="contact_name">الاسم</label>
+                            <input id="footer-contact-name" type="text" required autocomplete="name" data-i18n-placeholder="contact_name_placeholder" placeholder="اكتب اسمك">
+                        </div>
+                        <div class="field">
+                            <label for="footer-contact-customer-email" data-i18n="contact_customer_email">البريد الإلكتروني</label>
+                            <input id="footer-contact-customer-email" type="email" required autocomplete="email" data-i18n-placeholder="contact_customer_email_placeholder" placeholder="name@example.com">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="footer-contact-message" data-i18n="contact_message">الرسالة</label>
+                        <textarea id="footer-contact-message" rows="4" required data-i18n-placeholder="contact_message_placeholder" placeholder="اكتب رسالتك"></textarea>
+                    </div>
+                    <p class="checkout-error" id="contact-error" role="alert" hidden></p>
+                    <button id="footer-contact-submit" class="btn btn-primary" type="submit">
+                        <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>
+                        <span data-i18n="contact_submit">إرسال الرسالة</span>
+                    </button>
                 </form>
             </section>
-            <div class="copyright">
-                <p>&copy; 2026 Mais Beauty. All rights reserved. | <a href="admin.html" style="color: var(--color-text-light); text-decoration: underline;">Admin Panel</a></p>
-            </div>
+        </div>
+        <div class="container copyright">
+            <p dir="ltr">&copy; 2026 Mais Beauty. All rights reserved.</p>
+            <a href="admin.html" class="admin-link">Admin</a>
         </div>
     </footer>
 
     <!-- App Logic -->
-    <script type="module" src="script.js?v=12"></script>
+    <script type="module" src="script.js?v=13"></script>
 </body>
 </html>
