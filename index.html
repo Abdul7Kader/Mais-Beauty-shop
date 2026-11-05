@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Mais Beauty - Skincare</title>
     <meta name="description" content="Mais Beauty - original German skincare: serums, face masks, eye pads and creams. Order easily via WhatsApp or email.">
-    <meta name="theme-color" content="#FAF4EF">
+    <meta name="theme-color" content="#FBF7F3">
     <link rel="icon" href="assets/logo.jpg">
+    <link rel="apple-touch-icon" href="assets/logo.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=7">
+    <link rel="stylesheet" href="styles.css?v=8">
     <script>
         /* Apply saved theme and language before first paint to avoid flashing. */
         (function () {
@@ -31,6 +32,7 @@
     <!-- Icon sprite -->
     <svg class="sprite" aria-hidden="true" focusable="false">
         <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
+        <symbol id="i-bag-plus" viewBox="0 0 24 24"><path d="M5.5 8h13l-1 12.5h-11z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/><path d="M12 11.5v6M9 14.5h6"/></symbol>
         <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 13.2A8.5 8.5 0 1 1 10.8 3.5a6.8 6.8 0 0 0 9.7 9.7z"/></symbol>
         <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></symbol>
         <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
@@ -39,29 +41,59 @@
         <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
         <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
         <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+        <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></symbol>
+        <symbol id="i-sort" viewBox="0 0 24 24"><path d="M7 5v14M4 16l3 3 3-3M17 19V5M14 8l3-3 3 3"/></symbol>
         <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.5 11.6a8.6 8.6 0 0 1-12.7 7.5L3.5 20.5l1.4-4.2a8.6 8.6 0 1 1 15.6-4.7z"/><path d="M9.2 8.2c-.4 2.9 2.6 6.4 5.9 6.6l1.1-1.4-1.9-1.1-.9.7c-1-.4-2.1-1.5-2.5-2.5l.7-.9-1-1.9z"/></symbol>
         <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 7l8.5 6 8.5-6"/></symbol>
         <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></symbol>
         <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.6-3 7.9-7 9.5-4-1.6-7-4.9-7-9.5V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
         <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5.5h16v10H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/></symbol>
         <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z"/></symbol>
+        <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5"/></symbol>
         <symbol id="i-zoom" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5M11 8.5v5M8.5 11h5"/></symbol>
         <symbol id="i-note" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></symbol>
         <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5l1.9 5.6 5.6 1.9-5.6 1.9-1.9 5.6-1.9-5.6-5.6-1.9 5.6-1.9z"/></symbol>
+        <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M19.5 4.5v4h-4"/></symbol>
     </svg>
 
     <a class="skip-link" href="#shop" data-i18n="skip_to_products">تخطي إلى المنتجات</a>
 
+    <!-- Announcement bar -->
+    <div class="announce" aria-label="Info">
+        <div class="announce-track" id="announce-track">
+            <p class="announce-item is-active"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span data-i18n="announce_1">منتجات ألمانية أصلية 100%</span></p>
+            <p class="announce-item"><svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg><span data-i18n="announce_2">اطلب خلال دقيقة عبر واتساب - بدون تسجيل</span></p>
+            <p class="announce-item"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span data-i18n="announce_3">بدون دفع إلكتروني - نؤكد طلبك معك شخصياً</span></p>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="site-header" id="site-header">
         <div class="container header-row">
-            <a class="brand" href="#top" aria-label="Mais Beauty">
-                <span class="brand-mark"><img src="assets/logo.jpg" alt="" width="40" height="40"></span>
-                <span class="brand-name">Mais Beauty</span>
-            </a>
+            <div class="header-start">
+                <button id="menu-btn" class="icon-btn" type="button" aria-label="Menu" aria-controls="menu-sheet" aria-expanded="false">
+                    <svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg>
+                </button>
+                <a class="brand" href="#top" aria-label="Mais Beauty">
+                    <span class="brand-mark"><img src="assets/logo.jpg" alt="" width="36" height="36"></span>
+                    <span class="brand-name">Mais Beauty</span>
+                </a>
+            </div>
+
+            <button class="search-trigger" id="search-trigger" type="button" aria-controls="search-panel">
+                <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+                <span data-i18n="search_placeholder">ابحث عن سيروم، ماسك...</span>
+            </button>
 
             <div class="header-actions">
-                <label class="lang-select">
+                <button id="search-btn" class="icon-btn only-mobile" type="button" aria-label="Search" aria-controls="search-panel">
+                    <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+                </button>
+                <label class="lang-select only-desktop">
                     <svg class="icon" aria-hidden="true"><use href="#i-globe"/></svg>
                     <select id="lang-switcher" aria-label="Language">
                         <option value="ar">العربية</option>
@@ -69,7 +101,7 @@
                         <option value="de">Deutsch</option>
                     </select>
                 </label>
-                <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle dark mode">
+                <button id="theme-toggle" class="icon-btn only-desktop" type="button" aria-label="Toggle dark mode">
                     <svg class="icon icon-moon" aria-hidden="true"><use href="#i-moon"/></svg>
                     <svg class="icon icon-sun" aria-hidden="true"><use href="#i-sun"/></svg>
                 </button>
@@ -109,6 +141,11 @@
                         </a>
                         <a href="#how-to-order" class="btn btn-ghost btn-lg" data-i18n="hero_cta_secondary">كيف أطلب؟</a>
                     </div>
+                    <ul class="hero-trust">
+                        <li><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span data-i18n="usp_original_title">منتجات أصلية 100%</span></li>
+                        <li><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span data-i18n="usp_order_short">بدون تسجيل</span></li>
+                        <li><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span data-i18n="usp_personal_title">تواصل شخصي</span></li>
+                    </ul>
                 </div>
                 <div class="hero-visual" aria-hidden="true">
                     <div class="hero-arch">
@@ -121,40 +158,34 @@
             </div>
         </section>
 
-        <!-- USP strip -->
-        <section class="usp-strip" aria-label="Benefits">
-            <div class="container usp-grid">
-                <div class="usp">
-                    <span class="usp-icon"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>
-                    <div>
-                        <h2 data-i18n="usp_original_title">منتجات أصلية 100%</h2>
-                        <p data-i18n="usp_original_text">مختارة بعناية من علامات ألمانية وأوروبية</p>
-                    </div>
-                </div>
-                <div class="usp">
-                    <span class="usp-icon"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
-                    <div>
-                        <h2 data-i18n="usp_order_title">طلب خلال دقيقة</h2>
-                        <p data-i18n="usp_order_text">عبر واتساب أو البريد الإلكتروني، بدون تسجيل</p>
-                    </div>
-                </div>
-                <div class="usp">
-                    <span class="usp-icon"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg></span>
-                    <div>
-                        <h2 data-i18n="usp_personal_title">تواصل شخصي</h2>
-                        <p data-i18n="usp_personal_text">بدون دفع إلكتروني - نؤكد طلبك معك مباشرة</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Shop by category -->
+        <section class="cat-tiles-section container" aria-labelledby="cat-tiles-heading" id="cat-tiles-section" hidden>
+            <h2 class="section-title small" id="cat-tiles-heading" data-i18n="shop_by_category">تسوّق حسب الفئة</h2>
+            <ul class="cat-tiles" id="cat-tiles"></ul>
         </section>
 
         <div id="shop" class="shop" tabindex="-1">
-            <section class="products-section container" id="offers-section" aria-labelledby="offers-heading">
+            <div class="container shop-toolbar" id="shop-toolbar">
+                <p class="shop-total" id="shop-total" aria-live="polite"></p>
+                <label class="sort-select">
+                    <svg class="icon" aria-hidden="true"><use href="#i-sort"/></svg>
+                    <span class="visually-hidden" data-i18n="sort_label">ترتيب</span>
+                    <select id="sort-select">
+                        <option value="recommended" data-i18n="sort_recommended">الأكثر تميزاً</option>
+                        <option value="price-asc" data-i18n="sort_price_asc">السعر: من الأقل</option>
+                        <option value="price-desc" data-i18n="sort_price_desc">السعر: من الأعلى</option>
+                        <option value="name" data-i18n="sort_name">الاسم: أ - ي</option>
+                    </select>
+                </label>
+            </div>
+
+            <section class="products-section container is-rail" id="offers-section" aria-labelledby="offers-heading">
                 <div class="section-head">
                     <h2 class="section-title" id="offers-heading" data-i18n="offers_title">العروض الخاصة</h2>
                     <span class="section-count" data-count-for="offers"></span>
                 </div>
                 <div class="products-grid" id="offers-grid"></div>
+                <button class="btn btn-outline show-more" type="button" data-show-more="offers" hidden></button>
             </section>
 
             <section class="products-section container" id="serums-section" aria-labelledby="serums-heading">
@@ -163,6 +194,7 @@
                     <span class="section-count" data-count-for="serums"></span>
                 </div>
                 <div class="products-grid" id="serums-grid"></div>
+                <button class="btn btn-outline show-more" type="button" data-show-more="serums" hidden></button>
             </section>
 
             <section class="products-section container" id="masks-section" aria-labelledby="masks-heading">
@@ -171,6 +203,7 @@
                     <span class="section-count" data-count-for="masks"></span>
                 </div>
                 <div class="products-grid" id="masks-grid"></div>
+                <button class="btn btn-outline show-more" type="button" data-show-more="masks" hidden></button>
             </section>
 
             <section class="products-section container" id="eyes-section" aria-labelledby="eyes-heading">
@@ -179,6 +212,7 @@
                     <span class="section-count" data-count-for="eyes"></span>
                 </div>
                 <div class="products-grid" id="eyes-grid"></div>
+                <button class="btn btn-outline show-more" type="button" data-show-more="eyes" hidden></button>
             </section>
 
             <section class="products-section container" id="creams-section" aria-labelledby="creams-heading">
@@ -187,6 +221,7 @@
                     <span class="section-count" data-count-for="creams"></span>
                 </div>
                 <div class="products-grid" id="creams-grid"></div>
+                <button class="btn btn-outline show-more" type="button" data-show-more="creams" hidden></button>
             </section>
         </div>
 
@@ -198,69 +233,188 @@
                 <ol class="steps">
                     <li class="step">
                         <span class="step-num">1</span>
-                        <h3 data-i18n="step1_title">اختر منتجاتك</h3>
-                        <p data-i18n="step1_text">أضف المنتجات إلى السلة بنقرة واحدة.</p>
+                        <div>
+                            <h3 data-i18n="step1_title">اختر منتجاتك</h3>
+                            <p data-i18n="step1_text">أضف المنتجات إلى السلة بنقرة واحدة.</p>
+                        </div>
                     </li>
                     <li class="step">
                         <span class="step-num">2</span>
-                        <h3 data-i18n="step2_title">أدخل اسمك ورقمك</h3>
-                        <p data-i18n="step2_text">الاسم ورقم الهاتف فقط - بدون حساب أو تسجيل.</p>
+                        <div>
+                            <h3 data-i18n="step2_title">أدخل اسمك ورقمك</h3>
+                            <p data-i18n="step2_text">الاسم ورقم الهاتف فقط - بدون حساب أو تسجيل.</p>
+                        </div>
                     </li>
                     <li class="step">
                         <span class="step-num">3</span>
-                        <h3 data-i18n="step3_title">أرسل الطلب</h3>
-                        <p data-i18n="step3_text">عبر واتساب أو البريد الإلكتروني - رسالة الطلب جاهزة تلقائياً.</p>
+                        <div>
+                            <h3 data-i18n="step3_title">أرسل الطلب</h3>
+                            <p data-i18n="step3_text">عبر واتساب أو البريد الإلكتروني - رسالة الطلب جاهزة تلقائياً.</p>
+                        </div>
                     </li>
                 </ol>
+
+                <div class="faq" id="faq">
+                    <h2 class="section-title small center" data-i18n="faq_title">أسئلة شائعة</h2>
+                    <details class="faq-item">
+                        <summary><span data-i18n="faq1_q">هل أحتاج إلى الدفع عبر الإنترنت؟</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+                        <p data-i18n="faq1_a">لا. لا يوجد دفع إلكتروني. ترسل طلبك ثم نتواصل معك مباشرة لتأكيده.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary><span data-i18n="faq2_q">هل أحتاج إلى حساب؟</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+                        <p data-i18n="faq2_a">لا. يكفي اسمك ورقم هاتفك. نحفظ بياناتك على جهازك فقط لتسهيل الطلب القادم.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary><span data-i18n="faq3_q">هل المنتجات أصلية؟</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+                        <p data-i18n="faq3_a">نعم، جميع المنتجات أصلية ومختارة بعناية من علامات ألمانية وأوروبية.</p>
+                    </details>
+                    <details class="faq-item">
+                        <summary><span data-i18n="faq4_q">ماذا يحدث بعد إرسال الطلب؟</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+                        <p data-i18n="faq4_a">تصلنا رسالة طلبك عبر واتساب أو البريد الإلكتروني، ثم نرد عليك لتأكيد الطلب.</p>
+                    </details>
+                </div>
             </div>
         </section>
     </main>
 
-    <!-- Product Modal -->
+    <!-- Search panel -->
+    <div id="search-panel" class="search-panel" role="dialog" aria-modal="true" aria-label="Search" hidden>
+        <div class="search-backdrop" data-close-search></div>
+        <div class="search-sheet">
+            <div class="search-bar">
+                <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+                <input id="search-input" type="search" autocomplete="off" enterkeyhint="search" data-i18n-placeholder="search_placeholder" placeholder="ابحث عن سيروم، ماسك..." aria-label="Search">
+                <button type="button" class="search-cancel" data-close-search data-i18n="cancel">إلغاء</button>
+            </div>
+            <div class="search-body">
+                <div class="search-suggest" id="search-suggest">
+                    <p class="search-label" data-i18n="search_categories">الفئات</p>
+                    <div class="search-chips" id="search-chips"></div>
+                </div>
+                <p class="search-label" id="search-result-label" hidden></p>
+                <ul class="search-results" id="search-results"></ul>
+                <div class="search-empty" id="search-empty" hidden>
+                    <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+                    <p data-i18n="search_no_results">لا توجد نتائج. جرّب كلمة أخرى.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu sheet -->
+    <div id="menu-sheet" class="menu-sheet" role="dialog" aria-modal="true" aria-labelledby="menu-title" hidden>
+        <div class="menu-backdrop" data-close-menu></div>
+        <div class="menu-panel">
+            <div class="menu-head">
+                <a class="brand" href="#top" data-close-menu aria-label="Mais Beauty">
+                    <span class="brand-mark"><img src="assets/logo.jpg" alt="" width="36" height="36"></span>
+                    <span class="brand-name" id="menu-title">Mais Beauty</span>
+                </a>
+                <button type="button" class="icon-btn" data-close-menu aria-label="Close">
+                    <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
+                </button>
+            </div>
+            <nav class="menu-links" aria-label="Categories">
+                <p class="menu-label" data-i18n="menu_categories">الفئات</p>
+                <ul id="menu-category-links"></ul>
+            </nav>
+            <div class="menu-group">
+                <p class="menu-label" data-i18n="menu_language">اللغة</p>
+                <div class="segmented" role="radiogroup" aria-label="Language" id="lang-segmented">
+                    <button type="button" role="radio" data-lang="ar">العربية</button>
+                    <button type="button" role="radio" data-lang="en">English</button>
+                    <button type="button" role="radio" data-lang="de">Deutsch</button>
+                </div>
+            </div>
+            <div class="menu-group">
+                <p class="menu-label" data-i18n="menu_theme">المظهر</p>
+                <div class="segmented" role="radiogroup" aria-label="Theme" id="theme-segmented">
+                    <button type="button" role="radio" data-theme-value="light"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg><span data-i18n="theme_light">فاتح</span></button>
+                    <button type="button" role="radio" data-theme-value="dark"><svg class="icon" aria-hidden="true"><use href="#i-moon"/></svg><span data-i18n="theme_dark">داكن</span></button>
+                </div>
+            </div>
+            <div class="menu-links menu-links-secondary">
+                <ul>
+                    <li><a href="#how-to-order" data-close-menu><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span data-i18n="hero_cta_secondary">كيف أطلب؟</span></a></li>
+                    <li><a href="#faq" data-close-menu><svg class="icon" aria-hidden="true"><use href="#i-note"/></svg><span data-i18n="faq_title">أسئلة شائعة</span></a></li>
+                    <li><a href="#contact" data-close-menu><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span data-i18n="contact_form_title">تواصل معنا</span></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Modal / mobile product sheet -->
     <div id="product-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" hidden>
         <div class="modal-backdrop" data-close-modal></div>
         <div class="modal-content">
             <button type="button" class="icon-btn close-modal" aria-label="Close" data-close-modal>
                 <svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>
             </button>
-            <div class="modal-body">
-                <div class="modal-image-container">
-                    <img id="modal-img" src="" alt="" tabindex="0">
-                    <span class="zoom-hint" aria-hidden="true"><svg class="icon"><use href="#i-zoom"/></svg></span>
-                </div>
-                <div class="modal-details">
-                    <p class="eyebrow" id="modal-category"></p>
-                    <h2 id="modal-title"></h2>
-                    <p id="modal-price" class="modal-price"></p>
-                    <div id="modal-desc" class="modal-desc"></div>
-                    <p id="modal-in-cart" class="modal-in-cart" hidden></p>
+            <div class="modal-scroll">
+                <div class="modal-body">
+                    <div class="modal-image-container">
+                        <img id="modal-img" src="" alt="" tabindex="0">
+                        <span class="badge modal-offer-badge" id="modal-offer-badge" hidden><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg><span data-i18n="offer_badge">عرض</span></span>
+                        <span class="zoom-hint" aria-hidden="true"><svg class="icon"><use href="#i-zoom"/></svg></span>
+                    </div>
+                    <div class="modal-details">
+                        <p class="eyebrow" id="modal-category"></p>
+                        <h2 id="modal-title"></h2>
+                        <p id="modal-price" class="modal-price"></p>
+                        <p id="modal-in-cart" class="modal-in-cart" hidden></p>
 
-                    <div class="modal-buy">
-                        <div class="quantity-selector">
-                            <label for="modal-qty" class="visually-hidden" data-i18n="quantity">الكمية:</label>
-                            <div class="stepper stepper-lg">
+                        <div class="modal-buy">
+                            <div class="stepper stepper-lg" role="group">
                                 <button class="qty-btn minus" type="button" aria-label="-"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button>
-                                <input type="number" id="modal-qty" value="1" min="1" inputmode="numeric">
+                                <input type="number" id="modal-qty" value="1" min="1" inputmode="numeric" aria-label="Quantity">
                                 <button class="qty-btn plus" type="button" aria-label="+"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
                             </div>
+                            <button id="modal-add-to-cart" class="btn btn-primary btn-lg" type="button">
+                                <svg class="icon" aria-hidden="true"><use href="#i-bag-plus"/></svg>
+                                <span data-i18n="add_to_cart">إضافة للسلة</span>
+                                <span class="btn-price" id="modal-add-price"></span>
+                            </button>
                         </div>
-                        <button id="modal-add-to-cart" class="btn btn-primary btn-lg" type="button">
-                            <svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg>
-                            <span data-i18n="add_to_cart">إضافة للسلة</span>
-                            <span class="btn-price" id="modal-add-price"></span>
-                        </button>
-                    </div>
-                    <div id="modal-cart-feedback" class="modal-cart-feedback" hidden>
-                        <p class="feedback-msg">
-                            <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
-                            <span data-i18n="cart_added">تمت الإضافة إلى السلة</span>
-                        </p>
-                        <div class="feedback-actions">
-                            <button id="modal-go-to-cart" class="btn btn-primary" type="button" data-i18n="go_to_cart">الذهاب إلى السلة</button>
-                            <button id="modal-continue" class="btn btn-ghost" type="button" data-i18n="continue_shopping">متابعة التسوق</button>
+                        <div id="modal-cart-feedback" class="modal-cart-feedback" hidden>
+                            <p class="feedback-msg">
+                                <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+                                <span data-i18n="cart_added">تمت الإضافة إلى السلة</span>
+                            </p>
+                            <div class="feedback-actions">
+                                <button id="modal-go-to-cart" class="btn btn-primary" type="button" data-i18n="go_to_cart">الذهاب إلى السلة</button>
+                                <button id="modal-continue" class="btn btn-ghost" type="button" data-i18n="continue_shopping">متابعة التسوق</button>
+                            </div>
                         </div>
+
+                        <ul class="pdp-trust">
+                            <li><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span data-i18n="usp_original_title">منتجات أصلية 100%</span></li>
+                            <li><svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg><span data-i18n="pdp_trust_order">اطلب عبر واتساب أو البريد</span></li>
+                            <li><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span data-i18n="pdp_trust_payment">بدون دفع إلكتروني</span></li>
+                        </ul>
+
+                        <details class="pdp-acc" id="modal-desc-wrap" open>
+                            <summary><span data-i18n="pdp_description">الوصف</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+                            <div id="modal-desc" class="modal-desc"></div>
+                        </details>
+                        <details class="pdp-acc">
+                            <summary><span data-i18n="hero_cta_secondary">كيف أطلب؟</span><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></summary>
+                            <ol class="pdp-steps">
+                                <li data-i18n="step1_text">أضف المنتجات إلى السلة بنقرة واحدة.</li>
+                                <li data-i18n="step2_text">الاسم ورقم الهاتف فقط - بدون حساب أو تسجيل.</li>
+                                <li data-i18n="step3_text">عبر واتساب أو البريد الإلكتروني - رسالة الطلب جاهزة تلقائياً.</li>
+                            </ol>
+                        </details>
                     </div>
                 </div>
+                <section class="related" id="modal-related-wrap" hidden>
+                    <h3 class="related-title" data-i18n="related_title">قد يعجبك أيضاً</h3>
+                    <div class="mini-rail" id="modal-related"></div>
+                </section>
+            </div>
+            <!-- Mobile sticky buy bar -->
+            <div class="pdp-bar" id="pdp-bar">
+                <strong class="pdp-bar-price" id="pdp-bar-price"></strong>
+                <div class="pdp-bar-action" id="pdp-bar-action"></div>
             </div>
         </div>
     </div>
@@ -274,10 +428,13 @@
 
     <!-- Cart Drawer -->
     <div id="cart-overlay" class="cart-overlay" hidden></div>
-    <aside id="cart-sidebar" class="cart-sidebar" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true">
+    <aside id="cart-sidebar" class="cart-sidebar" role="dialog" aria-modal="true" aria-labelledby="cart-title" aria-hidden="true" data-step="cart">
         <div class="cart-header">
+            <button type="button" class="icon-btn cart-back" id="cart-back" aria-label="Back" hidden>
+                <svg class="icon icon-dir-back" aria-hidden="true"><use href="#i-arrow"/></svg>
+            </button>
             <h2 id="cart-title">
-                <span data-i18n="your_cart">سلة المشتريات</span>
+                <span id="cart-title-text" data-i18n="your_cart">سلة المشتريات</span>
                 <span class="cart-title-count" id="cart-title-count"></span>
             </h2>
             <button type="button" class="icon-btn close-cart" aria-label="Close cart">
@@ -285,64 +442,121 @@
             </button>
         </div>
 
+        <ol class="checkout-progress" id="checkout-progress" aria-label="Checkout">
+            <li data-progress="cart"><span>1</span><em data-i18n="progress_cart">السلة</em></li>
+            <li data-progress="details"><span>2</span><em data-i18n="progress_details">بياناتك</em></li>
+            <li data-progress="done"><span>3</span><em data-i18n="progress_send">الإرسال</em></li>
+        </ol>
+
         <div class="cart-body">
-            <div id="cart-empty" class="cart-empty">
-                <span class="cart-empty-icon"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg></span>
-                <h3 data-i18n="cart_empty_title">سلتك فارغة</h3>
-                <p data-i18n="cart_empty_text">اكتشف منتجاتنا وأضف ما يعجبك بنقرة واحدة.</p>
-                <button type="button" class="btn btn-primary" id="cart-start-shopping" data-i18n="start_shopping">ابدأ التسوق</button>
+            <!-- Step 1: cart -->
+            <div class="cart-step" data-step-panel="cart">
+                <div id="cart-empty" class="cart-empty">
+                    <span class="cart-empty-icon"><svg class="icon" aria-hidden="true"><use href="#i-bag"/></svg></span>
+                    <h3 data-i18n="cart_empty_title">سلتك فارغة</h3>
+                    <p data-i18n="cart_empty_text">اكتشف منتجاتنا وأضف ما يعجبك بنقرة واحدة.</p>
+                    <button type="button" class="btn btn-primary" id="cart-start-shopping" data-i18n="start_shopping">ابدأ التسوق</button>
+                </div>
+
+                <div id="cart-items" class="cart-items"></div>
+
+                <section class="related cart-related" id="cart-related-wrap" hidden>
+                    <h3 class="related-title" data-i18n="cart_related_title">أكمل روتينك</h3>
+                    <div class="mini-rail" id="cart-related"></div>
+                </section>
             </div>
 
-            <div id="cart-items" class="cart-items"></div>
-
-            <form class="checkout-fields" id="checkout-form" novalidate>
-                <h3 class="checkout-heading" data-i18n="your_details">بياناتك</h3>
-                <div class="field">
-                    <label for="customer-name" data-i18n="customer_name">اسم العميل</label>
-                    <input id="customer-name" type="text" required autocomplete="name" data-i18n-placeholder="customer_name_placeholder" placeholder="اكتب اسمك">
-                    <p class="field-error" id="customer-name-error" hidden></p>
-                </div>
-                <div class="field">
-                    <label for="customer-phone" data-i18n="customer_phone">رقم هاتف العميل</label>
-                    <div class="phone-group" dir="ltr">
-                        <select id="customer-country" aria-label="Customer country code">
-                            <option value="+963">SY +963</option>
-                            <option value="+49">DE +49</option>
-                            <option value="" data-i18n="customer_country_other">Other</option>
-                        </select>
-                        <input id="customer-phone" type="tel" required autocomplete="tel-national" inputmode="tel" placeholder="9XXXXXXXX">
+            <!-- Step 2: details -->
+            <div class="cart-step" data-step-panel="details" hidden>
+                <form class="checkout-fields" id="checkout-form" novalidate>
+                    <p class="checkout-intro" data-i18n="checkout_intro">لا حاجة لحساب. نحتاج فقط اسمك ورقمك لتأكيد الطلب.</p>
+                    <div class="field">
+                        <label for="customer-name" data-i18n="customer_name">اسم العميل</label>
+                        <div class="input-icon">
+                            <svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>
+                            <input id="customer-name" type="text" required autocomplete="name" data-i18n-placeholder="customer_name_placeholder" placeholder="اكتب اسمك">
+                        </div>
+                        <p class="field-error" id="customer-name-error" hidden></p>
                     </div>
-                    <small class="phone-help" id="customer-phone-help">اكتب رقمك المحلي فقط، مثال: 9XXXXXXXX</small>
-                    <p class="field-error" id="customer-phone-error" hidden></p>
+                    <div class="field">
+                        <label for="customer-phone" data-i18n="customer_phone">رقم هاتف العميل</label>
+                        <div class="phone-group" dir="ltr">
+                            <select id="customer-country" aria-label="Customer country code">
+                                <option value="+963">🇸🇾 +963</option>
+                                <option value="+49">🇩🇪 +49</option>
+                                <option value="" data-i18n="customer_country_other">Other</option>
+                            </select>
+                            <input id="customer-phone" type="tel" required autocomplete="tel-national" inputmode="tel" placeholder="9XXXXXXXX">
+                        </div>
+                        <small class="phone-help" id="customer-phone-help">اكتب رقمك المحلي فقط، مثال: 9XXXXXXXX</small>
+                        <p class="field-error" id="customer-phone-error" hidden></p>
+                    </div>
+                    <details class="note-toggle" id="note-toggle">
+                        <summary>
+                            <svg class="icon" aria-hidden="true"><use href="#i-note"/></svg>
+                            <span data-i18n="add_note">إضافة ملاحظة</span>
+                        </summary>
+                        <label for="customer-note" class="visually-hidden" data-i18n="order_note">ملاحظات أو رغبات</label>
+                        <textarea id="customer-note" rows="3" data-i18n-placeholder="order_note_placeholder" placeholder="اختياري"></textarea>
+                    </details>
+                </form>
+
+                <div class="order-review" id="order-review">
+                    <button type="button" class="order-review-head" id="order-review-edit">
+                        <span class="order-review-thumbs" id="order-review-thumbs"></span>
+                        <span class="order-review-text">
+                            <strong id="order-review-count"></strong>
+                            <span data-i18n="edit_cart">تعديل السلة</span>
+                        </span>
+                        <svg class="icon icon-dir" aria-hidden="true"><use href="#i-chevron"/></svg>
+                    </button>
                 </div>
-                <details class="note-toggle" id="note-toggle">
-                    <summary>
-                        <svg class="icon" aria-hidden="true"><use href="#i-note"/></svg>
-                        <span data-i18n="add_note">إضافة ملاحظة</span>
-                    </summary>
-                    <label for="customer-note" class="visually-hidden" data-i18n="order_note">ملاحظات أو رغبات</label>
-                    <textarea id="customer-note" rows="3" data-i18n-placeholder="order_note_placeholder" placeholder="اختياري"></textarea>
-                </details>
-            </form>
+            </div>
+
+            <!-- Step 3: sent -->
+            <div class="cart-step" data-step-panel="done" hidden>
+                <div class="order-done">
+                    <span class="order-done-icon"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg></span>
+                    <h3 data-i18n="done_title">طلبك جاهز!</h3>
+                    <p id="done-text" data-i18n="done_text_whatsapp">فتحنا واتساب مع رسالة طلبك. اضغط «إرسال» هناك لإتمام الطلب، وسنرد عليك قريباً.</p>
+                    <div class="order-done-actions">
+                        <button type="button" class="btn btn-whatsapp btn-lg" id="done-resend">
+                            <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>
+                            <span data-i18n="done_resend">فتح الرسالة مرة أخرى</span>
+                        </button>
+                        <button type="button" class="btn btn-outline" id="done-finish" data-i18n="done_finish">تم الإرسال - تفريغ السلة</button>
+                        <button type="button" class="btn btn-ghost" id="done-back" data-i18n="done_back">العودة إلى الطلب</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="cart-footer" id="cart-footer">
-            <div class="cart-total">
-                <span data-i18n="total">الإجمالي:</span>
-                <span id="cart-total-value">0</span>
+            <div class="cart-summary">
+                <div class="cart-total">
+                    <span data-i18n="total">الإجمالي:</span>
+                    <span id="cart-total-value">0</span>
+                </div>
             </div>
             <p class="checkout-error" id="checkout-error" role="alert" hidden></p>
-            <div class="checkout-actions">
-                <button id="checkout-btn" class="btn btn-whatsapp btn-lg" type="button">
+
+            <div class="checkout-actions" data-footer-for="cart">
+                <button id="cart-continue-btn" class="btn btn-primary btn-lg btn-block" type="button">
+                    <span data-i18n="continue_to_details">متابعة الطلب</span>
+                    <svg class="icon icon-dir" aria-hidden="true"><use href="#i-arrow"/></svg>
+                </button>
+            </div>
+            <div class="checkout-actions" data-footer-for="details" hidden>
+                <button id="checkout-btn" class="btn btn-whatsapp btn-lg btn-block" type="button">
                     <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
                     <span data-i18n="checkout">اطلب الآن عبر واتساب</span>
                 </button>
-                <button id="email-checkout-btn" class="btn btn-outline" type="button">
+                <button id="email-checkout-btn" class="btn btn-text" type="button">
                     <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>
                     <span data-i18n="email_checkout">اطلب عبر البريد الإلكتروني</span>
                 </button>
             </div>
-            <p class="checkout-hint" data-i18n="checkout_hint">لا يوجد دفع إلكتروني. سيتم فتح رسالة الطلب جاهزة للإرسال.</p>
+            <p class="checkout-hint" data-footer-for="details" data-i18n="checkout_hint">لا يوجد دفع إلكتروني. سيتم فتح رسالة الطلب جاهزة للإرسال.</p>
         </div>
     </aside>
 
@@ -361,11 +575,15 @@
         </span>
     </button>
 
+    <button type="button" id="back-to-top" class="back-to-top" aria-label="Back to top" hidden>
+        <svg class="icon" aria-hidden="true"><use href="#i-up"/></svg>
+    </button>
+
     <!-- Toasts -->
     <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" id="contact">
         <div class="container footer-content">
             <section class="footer-about">
                 <a class="brand" href="#top" aria-label="Mais Beauty">
@@ -414,6 +632,6 @@
     </footer>
 
     <!-- App Logic -->
-    <script type="module" src="script.js?v=13"></script>
+    <script type="module" src="script.js?v=14"></script>
 </body>
 </html>
