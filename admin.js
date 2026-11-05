@@ -171,6 +171,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('p-desc-de').value = product.descriptionDe || '';
         document.getElementById('p-price-usd').value = ((product.priceUsdCents || 0) / 100).toFixed(2);
         document.getElementById('p-price-syp').value = product.priceSyp || 0;
+        document.getElementById('p-discount').value = Number(product.discountPercent) || 0;
+        updateDiscountPreview();
         document.getElementById('p-sort-order').value = product.sortOrder ?? 0;
         categorySelect.value = validCategories.includes(product.category) ? product.category : 'offers';
         document.getElementById('p-active').checked = product.active !== false;
@@ -194,6 +196,8 @@ document.addEventListener('DOMContentLoaded', () => {
         form.reset();
         document.getElementById('p-active').checked = true;
         document.getElementById('p-sort-order').value = 0;
+        document.getElementById('p-discount').value = 0;
+        updateDiscountPreview();
         categorySelect.value = 'offers';
         formTitle.textContent = 'إضافة منتج جديد';
         editBanner.style.display = 'none';
@@ -203,6 +207,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     cancelBtn.addEventListener('click', exitEditMode);
+
+    // Rabatt: 0-90 %, Vorschau des reduzierten Preises
+    function readDiscount() {
+        const value = Math.round(Number(document.getElementById('p-discount').value) || 0);
+        return Math.min(90, Math.max(0, value));
+    }
+
+    function updateDiscountPreview() {
+        const preview = document.getElementById('p-discount-preview');
+        if (!preview) return;
+        const price = parseFloat(document.getElementById('p-price-usd').value);
+        const discount = readDiscount();
+        if (isNaN(price) || price <= 0) { preview.textContent = '-'; return; }
+        const reduced = Math.round(Math.round(price * 100) * (100 - discount) / 100) / 100;
+        preview.textContent = discount
+            ? `$${reduced.toFixed(2)}  (-${discount}%, بدلاً من $${price.toFixed(2)})`
+            : `$${price.toFixed(2)} (بدون خصم)`;
+    }
+
+    ['p-discount', 'p-price-usd'].forEach((id) => {
+        document.getElementById(id).addEventListener('input', updateDiscountPreview);
+    });
+    updateDiscountPreview();
 
     // Initial check on load
     checkAuthState();
@@ -306,13 +333,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const activeLabel = p.active !== false ? '\u2705 \u0646\u0634\u0637' : '\u274C \u0645\u062e\u0641\u064a';
             const categoryLabel = validCategories.includes(p.category) ? p.category : 'offers';
+            const discountLabel = Number(p.discountPercent) > 0 ? ` | Rabatt -${Number(p.discountPercent)}%` : '';
 
             div.innerHTML = `
                 <div style="display:flex; align-items:center;">
                     <img src="${p.imageUrl}" alt="Product Image" onerror="this.onerror=null;this.style.display='none';">
                     <div class="product-info">
                         <h3>${p.name}</h3>
-                        <p>$${((p.priceUsdCents || 0) / 100).toFixed(2)} | SYP ${p.priceSyp} | Kategorie: ${categoryLabel} | Sortierung: ${p.sortOrder ?? 0} | ${activeLabel}</p>
+                        <p>$${((p.priceUsdCents || 0) / 100).toFixed(2)} | SYP ${p.priceSyp} | Kategorie: ${categoryLabel} | Sortierung: ${p.sortOrder ?? 0} | ${activeLabel}${discountLabel}</p>
                     </div>
                 </div>
                 <div style="display:flex; gap:8px;">
@@ -349,6 +377,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const sortOrder = parseInt(document.getElementById('p-sort-order').value, 10) || 0;
         const category = validCategories.includes(categorySelect.value) ? categorySelect.value : 'offers';
         const active = document.getElementById('p-active').checked;
+        const discountPercent = readDiscount();
+        const editedProduct = editProductId ? products.find((item) => item.id === editProductId) : null;
+        /* Only send the field when it matters, so saving keeps working until the
+           attribute "discountPercent" exists in Appwrite. */
+        const sendDiscount = discountPercent > 0 || Boolean(editedProduct && 'discountPercent' in editedProduct);
         const description = document.getElementById('p-desc').value.trim();
         const nameAr = document.getElementById('p-name-ar').value.trim();
         const descriptionAr = document.getElementById('p-desc-ar').value.trim();
@@ -387,6 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     category,
                     active
                 };
+                if (sendDiscount) updateData.discountPercent = discountPercent;
 
                 if (file) {
                     // Neues Bild: komprimieren, hochladen, URLs aktualisieren
@@ -438,16 +472,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     active,
                     sortOrder
                 };
+                if (sendDiscount) newProduct.discountPercent = discountPercent;
 
                 await databases.createDocument('mais_beauty_db', 'products', ID.unique(), newProduct);
                 form.reset();
                 document.getElementById('p-active').checked = true;
                 document.getElementById('p-sort-order').value = 0;
+                document.getElementById('p-discount').value = 0;
+                updateDiscountPreview();
                 categorySelect.value = 'offers';
                 alert('\u062a\u0645 \u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0646\u062a\u062c \u0628\u0646\u062c\u0627\u062d!');
             }
         } catch (error) {
             console.error('Fehler beim Speichern:', error);
+            if (String(error?.message || '').includes('discountPercent')) {
+                alert('حقل الخصم غير موجود بعد في Appwrite. أضف في مجموعة products حقلاً من نوع Integer باسم discountPercent (min 0, max 90, default 0).' + String.fromCharCode(10, 10) + 'Das Feld "discountPercent" fehlt in Appwrite: in der Collection "products" ein Integer-Attribut discountPercent anlegen (min 0, max 90, default 0).');
+                return;
+            }
             alert('\u062d\u062f\u062b \u062e\u0637\u0623 \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u062d\u0641\u0638. (Fehler beim Speichern)');
         } finally {
             submitBtn.textContent = originalText;

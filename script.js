@@ -122,6 +122,8 @@ const appData = {
             open_cart: "فتح السلة",
             toggle_theme: "تبديل الوضع الداكن",
             announce_1: "منتجات ألمانية أصلية 100%",
+            you_save: "وفّرت {x}",
+            discount_note: "خصم {n}%، بدلاً من {x}",
             announce_2: "اطلب خلال دقيقة عبر واتساب - بدون تسجيل",
             announce_3: "بدون دفع إلكتروني - نؤكد طلبك معك شخصياً",
             usp_order_short: "بدون تسجيل",
@@ -289,6 +291,8 @@ const appData = {
             open_cart: "Open cart",
             toggle_theme: "Toggle dark mode",
             announce_1: "100% original German products",
+            you_save: "You save {x}",
+            discount_note: "{n}% off, was {x}",
             announce_2: "Order in a minute via WhatsApp - no sign-up",
             announce_3: "No online payment - we confirm your order personally",
             usp_order_short: "No sign-up",
@@ -452,6 +456,8 @@ const appData = {
             open_cart: "Warenkorb öffnen",
             toggle_theme: "Dunkelmodus umschalten",
             announce_1: "100 % Originalware aus Deutschland",
+            you_save: "Du sparst {x}",
+            discount_note: "{n} % Rabatt, statt {x}",
             announce_2: "In einer Minute per WhatsApp bestellt - ohne Konto",
             announce_3: "Keine Online-Zahlung - wir bestätigen persönlich",
             usp_order_short: "Ohne Konto",
@@ -630,8 +636,41 @@ function formatPrice(usd) {
     return `$${Number(usd || 0).toFixed(2)}`;
 }
 
-function getProductPriceUsd(product) {
+/* Admin sets discountPercent (0-90) per product; the price shown and charged is the reduced one. */
+function getDiscountPercent(product) {
+    const value = Math.round(Number(product?.discountPercent) || 0);
+    return Math.min(90, Math.max(0, value));
+}
+
+function getOriginalPriceUsd(product) {
     return Number(product.priceUsdCents || 0) / 100;
+}
+
+function getProductPriceUsd(product) {
+    const cents = Number(product.priceUsdCents || 0);
+    return Math.round(cents * (100 - getDiscountPercent(product)) / 100) / 100;
+}
+
+/* Price markup: current price, plus struck-through original when discounted. */
+function priceHtml(product, qty = 1) {
+    const now = `<span class="price-now">${formatPrice(getProductPriceUsd(product) * qty)}</span>`;
+    if (!getDiscountPercent(product)) return now;
+    return `${now} <s class="price-was">${formatPrice(getOriginalPriceUsd(product) * qty)}</s>`;
+}
+
+function isOnOffer(product) {
+    return getProductCategory(product) === "offers" || getDiscountPercent(product) > 0;
+}
+
+function offerBadgeHtml(product) {
+    const discount = getDiscountPercent(product);
+    if (discount) return `<span class="badge badge-sale"><bdi dir="ltr">-${discount}%</bdi></span>`;
+    if (getProductCategory(product) === "offers") return `<span class="badge">${icon("sparkle")}${escapeHtml(t("offer_badge"))}</span>`;
+    return "";
+}
+
+function getCartSavings() {
+    return cart.reduce((sum, item) => sum + (getOriginalPriceUsd(item) - getProductPriceUsd(item)) * item.qty, 0);
 }
 
 function getLocalizedProductText(product, field) {
@@ -735,22 +774,7 @@ async function loadProducts() {
             APPWRITE_DATABASE_ID,
             APPWRITE_PRODUCTS_COLLECTION_ID,
             [
-                Query.limit(100),
-                Query.select([
-                    "name",
-                    "description",
-                    "nameAr",
-                    "nameEn",
-                    "nameDe",
-                    "descriptionAr",
-                    "descriptionEn",
-                    "descriptionDe",
-                    "priceUsdCents",
-                    "imageUrl",
-                    "active",
-                    "sortOrder",
-                    "category"
-                ])
+                Query.limit(100)
             ]
         );
 
@@ -761,6 +785,7 @@ async function loadProducts() {
     }
 
     productsLoaded = true;
+    syncCartWithProducts();
     renderProducts();
     renderCartRelated();
 }
@@ -1283,14 +1308,14 @@ function productCardHtml(product, index) {
                 ${imageUrl
                     ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(name)}" class="product-image" loading="lazy" decoding="async">`
                     : `<span class="product-media-fallback">MB</span>`}
-                ${category === "offers" ? `<span class="badge">${icon("sparkle")}${escapeHtml(t("offer_badge"))}</span>` : ""}
+                ${offerBadgeHtml(product)}
                 <span class="badge badge-in-cart" data-in-cart-badge ${inCart ? "" : "hidden"}>${icon("check")}<span>${escapeHtml(t("in_cart_badge"))}</span></span>
             </button>
             <div class="product-info">
                 <h3 class="product-title"><button type="button" data-action="open">${escapeHtml(name)}</button></h3>
                 ${description ? `<p class="product-desc">${escapeHtml(description)}</p>` : ""}
                 <div class="product-bottom">
-                    <p class="product-price">${formatPrice(getProductPriceUsd(product))}</p>
+                    <p class="product-price">${priceHtml(product)}</p>
                     <div class="card-action" data-card-action="${escapeHtml(id)}" data-variant="card">${renderCardAction(product, "card")}</div>
                 </div>
             </div>
@@ -1309,7 +1334,7 @@ function miniCardHtml(product) {
             </button>
             <button class="mini-name" type="button" data-action="open">${escapeHtml(name)}</button>
             <div class="mini-bottom">
-                <span class="mini-price">${formatPrice(getProductPriceUsd(product))}</span>
+                <span class="mini-price">${priceHtml(product)}</span>
                 <div class="card-action" data-card-action="${escapeHtml(id)}" data-variant="mini">${renderCardAction(product, "mini")}</div>
             </div>
         </article>
@@ -1335,7 +1360,16 @@ function renderProducts() {
         const category = getProductCategory(product);
         groups[category].push(product);
         counts[category] += 1;
+        /* discounted products also show under offers, in addition to their own category */
+        if (category !== "offers" && getDiscountPercent(product) > 0) {
+            groups.offers.push(product);
+            counts.offers += 1;
+        }
     });
+    /* biggest discount first in offers when sorted by recommendation */
+    if (sortMode === "recommended") {
+        groups.offers.sort((a, b) => getDiscountPercent(b) - getDiscountPercent(a));
+    }
 
     const shopTotal = document.getElementById("shop-total");
     if (shopTotal) shopTotal.textContent = visibleProducts.length ? tn("all_products", visibleProducts.length) : "";
@@ -1554,7 +1588,7 @@ function renderSearch() {
                     <span class="search-thumb">${product.imageUrl ? `<img src="${escapeHtml(product.imageUrl)}" alt="" loading="lazy">` : ""}</span>
                     <span class="search-text">
                         <strong>${escapeHtml(name)}</strong>
-                        <span>${escapeHtml(t(`${getProductCategory(product)}_title`))} · <bdi dir="ltr">${formatPrice(getProductPriceUsd(product))}</bdi></span>
+                        <span>${escapeHtml(t(`${getProductCategory(product)}_title`))} · <bdi dir="ltr">${priceHtml(product)}</bdi></span>
                     </span>
                 </button>
                 <div class="card-action" data-card-action="${escapeHtml(id)}" data-variant="mini">${renderCardAction(product, "mini")}</div>
@@ -1610,7 +1644,14 @@ function openModal(product, resetFeedback = true) {
     }
     if (imageContainer) imageContainer.querySelector(".zoom-hint").hidden = !imageUrl;
     const offerBadge = document.getElementById("modal-offer-badge");
-    if (offerBadge) offerBadge.hidden = category !== "offers";
+    if (offerBadge) {
+        const discount = getDiscountPercent(product);
+        offerBadge.hidden = !isOnOffer(product);
+        offerBadge.classList.toggle("badge-sale", discount > 0);
+        offerBadge.innerHTML = discount
+            ? `<bdi dir="ltr">-${discount}%</bdi>`
+            : `${icon("sparkle")}<span>${escapeHtml(t("offer_badge"))}</span>`;
+    }
 
     const categoryEl = document.getElementById("modal-category");
     const title = document.getElementById("modal-title");
@@ -1620,7 +1661,7 @@ function openModal(product, resetFeedback = true) {
 
     if (categoryEl) categoryEl.textContent = t(`${category}_title`);
     if (title) title.textContent = name;
-    if (price) price.textContent = formatPrice(getProductPriceUsd(product));
+    if (price) price.innerHTML = priceHtml(product);
     if (desc) {
         const description = getLocalizedProductText(product, "description");
         desc.textContent = description;
@@ -1631,7 +1672,7 @@ function openModal(product, resetFeedback = true) {
 
     const barPrice = document.getElementById("pdp-bar-price");
     const barAction = document.getElementById("pdp-bar-action");
-    if (barPrice) barPrice.textContent = formatPrice(getProductPriceUsd(product));
+    if (barPrice) barPrice.innerHTML = priceHtml(product);
     if (barAction) {
         barAction.dataset.cardAction = getProductId(product);
         barAction.dataset.variant = "bar";
@@ -1838,6 +1879,7 @@ function getCartStorageItem(product) {
         descriptionEn: product.descriptionEn || "",
         descriptionDe: product.descriptionDe || "",
         priceUsdCents: Number(product.priceUsdCents) || 0,
+        discountPercent: getDiscountPercent(product),
         imageUrl: product.imageUrl || "",
         category: product.category || "",
         qty: Math.max(1, Number.parseInt(product.qty, 10) || 1)
@@ -1883,6 +1925,21 @@ function saveCartToStorage() {
     } catch (error) {
         /* storage unavailable - cart still works for this visit */
     }
+}
+
+/* A saved cart holds a snapshot; refresh price, discount, names and image from the live catalogue. */
+function syncCartWithProducts() {
+    if (!cart.length || !appData.products.length) return;
+    let changed = false;
+    cart = cart.map((item) => {
+        const fresh = appData.products.find((product) => getProductId(product) === item.$id);
+        if (!fresh) return item;
+        const next = { ...getCartStorageItem(fresh), qty: item.qty };
+        if (JSON.stringify(next) !== JSON.stringify(item)) changed = true;
+        return next;
+    });
+    if (changed) saveCartToStorage();
+    updateCartUI();
 }
 
 function addToCart(product, qty) {
@@ -1934,14 +1991,14 @@ function updateCartUI() {
                         <h4>${productName}</h4>
                         <button class="remove-item" type="button" data-cart-action="remove" data-product-id="${id}" aria-label="${escapeHtml(t("delete_item"))}: ${productName}">${icon("trash")}</button>
                     </div>
-                    <p class="cart-unit-price">${item.qty > 1 ? `<bdi dir="ltr">${item.qty} × ${formatPrice(itemPrice)}</bdi>` : "&nbsp;"}</p>
+                    <p class="cart-unit-price">${item.qty > 1 ? `<bdi dir="ltr">${item.qty} × ${formatPrice(itemPrice)}</bdi>` : ""}${getDiscountPercent(item) ? ` <span class="badge-inline"><bdi dir="ltr">-${getDiscountPercent(item)}%</bdi></span>` : ""}${item.qty <= 1 && !getDiscountPercent(item) ? "&nbsp;" : ""}</p>
                     <div class="cart-item-actions">
                         <div class="stepper cart-qty-controls" role="group" aria-label="${escapeHtml(t("whatsapp_quantity"))}">
                             <button class="cart-qty-btn" type="button" data-cart-action="decrease" data-product-id="${id}" aria-label="${escapeHtml(t("decrease_qty"))}" ${isLast ? "disabled" : ""}>${icon("minus")}</button>
                             <input class="cart-qty-input" type="number" min="1" value="${item.qty}" inputmode="numeric" data-product-id="${id}" aria-label="${escapeHtml(t("whatsapp_quantity"))}">
                             <button class="cart-qty-btn" type="button" data-cart-action="increase" data-product-id="${id}" aria-label="${escapeHtml(t("increase_qty"))}">${icon("plus")}</button>
                         </div>
-                        <span class="cart-line-total" data-line-total>${formatPrice(itemPrice * item.qty)}</span>
+                        <span class="cart-line-total" data-line-total>${priceHtml(item, item.qty)}</span>
                     </div>
                 </div>
             </div>
@@ -2015,6 +2072,12 @@ function updateCartSummary() {
     }
     const totalValue = document.getElementById("cart-total-value");
     if (totalValue) totalValue.textContent = total;
+    const savings = getCartSavings();
+    const savingsEl = document.getElementById("cart-savings");
+    if (savingsEl) {
+        savingsEl.hidden = savings < 0.005;
+        savingsEl.textContent = t("you_save").replace("{x}", formatPrice(savings));
+    }
     const titleCount = document.getElementById("cart-title-count");
     if (titleCount) titleCount.textContent = count ? `(${countLabel(count)})` : "";
     const mcbCount = document.getElementById("mcb-count");
@@ -2082,7 +2145,7 @@ function handleCartQuantityInput(event) {
             item.qty = Math.max(1, Number.parseInt(input.value, 10) || 1);
             saveCartToStorage();
             const lineTotal = input.closest(".cart-item")?.querySelector("[data-line-total]");
-            if (lineTotal) lineTotal.textContent = formatPrice(getProductPriceUsd(item) * item.qty);
+            if (lineTotal) lineTotal.innerHTML = priceHtml(item, item.qty);
             updateCartSummary();
             updateCardActions();
         }, 300);
@@ -2330,7 +2393,9 @@ function createOrderMessage(customerName, customerPhone, note) {
         return [
             `${index + 1}. ${productName}`,
             `   ${texts.whatsapp_quantity}: ${item.qty}`,
-            `   ${texts.whatsapp_unit_price}: ${formatPrice(unitPrice)}`,
+            `   ${texts.whatsapp_unit_price}: ${formatPrice(unitPrice)}${getDiscountPercent(item)
+                ? ` (${texts.discount_note.replace("{n}", getDiscountPercent(item)).replace("{x}", formatPrice(getOriginalPriceUsd(item)))})`
+                : ""}`,
             `   ${texts.whatsapp_line_total}: ${formatPrice(lineTotal)}`
         ].join("\n");
     });
