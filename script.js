@@ -1,21 +1,9 @@
-import { Client, Databases, Query } from "https://cdn.jsdelivr.net/npm/appwrite@16.1.0/+esm";
-
-const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
-const APPWRITE_PROJECT_ID = "6a0d8738002fb76a4caf";
-const APPWRITE_DATABASE_ID = "mais_beauty_db";
-const APPWRITE_PRODUCTS_COLLECTION_ID = "products";
-const APPWRITE_SETTINGS_COLLECTION_ID = "shop_settings";
-const APPWRITE_SETTINGS_DOCUMENT_ID = "main";
+/* Products and settings come from the Cloudflare Pages Function in functions/api/. */
+const CATALOG_URL = "/api/catalog";
 const CART_STORAGE_KEY = "maisBeautyCart";
 const CUSTOMER_STORAGE_KEY = "maisBeautyCustomer";
 const THEME_STORAGE_KEY = "beauty_store_theme";
 const LANG_STORAGE_KEY = "beauty_store_lang";
-
-const client = new Client()
-    .setEndpoint(APPWRITE_ENDPOINT)
-    .setProject(APPWRITE_PROJECT_ID);
-
-const databases = new Databases(client);
 
 const appData = {
     translations: {
@@ -743,47 +731,27 @@ function init() {
     renderSkeletons();
     updateCartUI();
     startAnnouncements();
-    loadShopSettings();
-    loadProducts();
+    loadCatalog();
 }
 
-async function loadShopSettings() {
+async function loadCatalog() {
+    let catalog = { products: [], settings: {} };
     try {
-        const settings = await databases.getDocument(
-            APPWRITE_DATABASE_ID,
-            APPWRITE_SETTINGS_COLLECTION_ID,
-            APPWRITE_SETTINGS_DOCUMENT_ID
-        );
-        shopWhatsAppNumber = settings.whatsappNumber || "";
-        shopOrderEmail = settings.orderEmail || "";
-        shopContactEmail = settings.contactEmail || "";
+        const response = await fetch(CATALOG_URL, { headers: { Accept: "application/json" } });
+        if (!response.ok) throw new Error(`catalog ${response.status}`);
+        catalog = await response.json();
     } catch (error) {
-        console.error("Appwrite shop settings load failed:", error);
-        shopWhatsAppNumber = "";
-        shopOrderEmail = "";
-        shopContactEmail = "";
+        console.error("Catalog load failed:", error);
     }
 
+    const settings = catalog.settings || {};
+    shopWhatsAppNumber = settings.whatsappNumber || "";
+    shopOrderEmail = settings.orderEmail || "";
+    shopContactEmail = settings.contactEmail || "";
     updateCheckoutState();
     updateContactState();
-}
 
-async function loadProducts() {
-    try {
-        const response = await databases.listDocuments(
-            APPWRITE_DATABASE_ID,
-            APPWRITE_PRODUCTS_COLLECTION_ID,
-            [
-                Query.limit(100)
-            ]
-        );
-
-        appData.products = response.documents || [];
-    } catch (error) {
-        console.error("Appwrite products load failed:", error);
-        appData.products = [];
-    }
-
+    appData.products = Array.isArray(catalog.products) ? catalog.products : [];
     productsLoaded = true;
     syncCartWithProducts();
     renderProducts();

@@ -2,354 +2,218 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة تحكم المشرف - Mais Beauty</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&family=Cinzel:wght@700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --color-gold: #C48B71;
-            --color-bg: #FAF4EF;
-            --color-surface: #FFFFFF;
-            --color-text-dark: #3A3331;
-            --color-border: #E8DCCC;
-            --radius: 8px;
-        }
-
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background-color: var(--color-bg);
-            color: var(--color-text-dark);
-            margin: 0;
-            padding: 20px;
-        }
-
-        .admin-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .header h1 {
-            font-family: 'Cinzel', serif;
-            color: var(--color-gold);
-        }
-
-        .btn {
-            background-color: var(--color-gold);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: var(--radius);
-            cursor: pointer;
-            font-family: 'Tajawal', sans-serif;
-            font-weight: 700;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-        }
-
-        .btn-danger {
-            background-color: #dc3545;
-        }
-
-        .btn-edit {
-            background-color: #5a7fcf;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-
-        .edit-mode-banner {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            border-radius: var(--radius);
-            padding: 10px 15px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            color: #856404;
-            display: none;
-        }
-
-        .card {
-            background: var(--color-surface);
-            border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: var(--color-text-dark);
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            font-family: 'Tajawal', sans-serif;
-            box-sizing: border-box;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--color-gold);
-            box-shadow: 0 0 0 2px rgba(196, 139, 113, 0.2);
-        }
-
-        .product-list {
-            display: grid;
-            gap: 15px;
-        }
-
-        .product-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            background: #fff;
-        }
-
-        .product-item img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: var(--radius);
-            margin-left: 15px;
-        }
-
-        .product-info {
-            flex-grow: 1;
-        }
-        
-        .product-info h3 {
-            margin: 0 0 5px 0;
-            font-size: 1.1rem;
-        }
-
-        .product-info p {
-            margin: 0;
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .lang-section {
-            border-right: 3px solid var(--color-gold);
-            padding-right: 15px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 600px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-            .product-item {
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-            }
-            .product-item img {
-                margin: 0 0 10px 0;
-            }
-            .product-item > div {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow">
+    <title>لوحة التحكم - Mais Beauty</title>
+    <link rel="icon" href="assets/logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css?v=2">
 </head>
 <body>
+    <!-- Login -->
+    <main id="login-view" class="login-view" hidden>
+        <form id="login-form" class="card login-card" novalidate>
+            <img src="assets/logo.jpg" alt="" class="login-logo" width="72" height="72">
+            <h1 class="brand-title">Mais Beauty</h1>
+            <p class="muted">لوحة التحكم · Admin-Bereich</p>
+            <div class="field">
+                <label for="login-password">كلمة السر <span class="de">Passwort</span></label>
+                <input id="login-password" type="password" autocomplete="current-password" required>
+            </div>
+            <p class="msg msg-error" id="login-error" role="alert" hidden></p>
+            <button type="submit" class="btn btn-primary btn-block" id="login-btn">دخول <span class="de">Anmelden</span></button>
+            <a href="index.html" class="link-back">العودة للمتجر · Zum Shop</a>
+        </form>
+    </main>
 
-    <div id="login-container" class="card" style="max-width: 400px; margin: 100px auto; text-align: center;">
-        <h2 style="color: var(--color-gold); font-family: 'Cinzel', serif;">Mais Beauty Admin</h2>
-        <p style="margin-bottom: 20px;">الرجاء تسجيل الدخول</p>
-        <input type="email" id="admin-email" placeholder="البريد الإلكتروني (Email)" style="margin-bottom: 15px; text-align: center;" required>
-        <input type="password" id="admin-password" placeholder="كلمة السر (Password)" style="margin-bottom: 15px; text-align: center;" required>
-        <button id="login-btn" class="btn" style="width: 100%;">دخول</button>
-        <p id="login-error" style="color: red; display: none; margin-top: 10px;">بيانات الدخول غير صحيحة!</p>
-        <a href="index.html" style="display: block; margin-top: 15px; font-size: 0.9rem;">العودة للمتجر</a>
+    <!-- Admin -->
+    <div id="admin-view" hidden>
+        <header class="topbar">
+            <div class="topbar-row">
+                <div class="topbar-brand">
+                    <img src="assets/logo.jpg" alt="" width="34" height="34">
+                    <div>
+                        <strong>Mais Beauty</strong>
+                        <span class="muted small">مرحباً <b id="current-user"></b> · Hallo</span>
+                    </div>
+                </div>
+                <div class="topbar-actions">
+                    <a href="index.html" class="btn btn-ghost btn-sm" target="_blank" rel="noopener">المتجر <span class="de">Shop</span></a>
+                    <button type="button" class="btn btn-ghost btn-sm" id="logout-btn">خروج <span class="de">Abmelden</span></button>
+                </div>
+            </div>
+            <nav class="tabs" aria-label="Bereiche">
+                <a href="#products-card">المنتجات <span class="de">Produkte</span></a>
+                <a href="#settings-card">الإعدادات <span class="de">Einstellungen</span></a>
+                <a href="#import-card">الاستيراد <span class="de">Import</span></a>
+                <a href="#backup-card">النسخ الاحتياطي <span class="de">Sicherung</span></a>
+                <a href="#log-card">السجل <span class="de">Protokoll</span></a>
+            </nav>
+        </header>
+
+        <main class="container">
+            <section class="card card-warning" id="setup-card" hidden>
+                <h2>الإعداد غير مكتمل <span class="de">Einrichtung fehlt</span></h2>
+                <p id="setup-text"></p>
+            </section>
+
+            <!-- Product form -->
+            <section class="card" id="product-form-card">
+                <div class="card-head">
+                    <h2 id="form-title">إضافة منتج جديد <span class="de">Neues Produkt</span></h2>
+                    <button type="button" class="btn btn-ghost btn-sm" id="cancel-edit-btn" hidden>إلغاء التعديل <span class="de">Abbrechen</span></button>
+                </div>
+                <p class="edit-banner" id="edit-banner" hidden></p>
+
+                <form id="product-form" novalidate>
+                    <div class="image-picker">
+                        <div class="image-preview" id="image-preview"><span>صورة<br><small>Foto</small></span></div>
+                        <div class="field grow">
+                            <label for="p-image-file">صورة المنتج <span class="de">Produktfoto</span></label>
+                            <input type="file" id="p-image-file" accept="image/jpeg,image/png,image/webp,image/*">
+                            <small class="muted">يتم تصغير الصورة تلقائياً. عند التعديل: اتركه فارغاً للإبقاء على الصورة. · Wird automatisch verkleinert. Beim Bearbeiten leer lassen = Foto bleibt.</small>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="field">
+                            <label for="p-price-usd">السعر بالدولار <span class="de">Preis in $</span></label>
+                            <input type="number" id="p-price-usd" step="0.01" min="0" inputmode="decimal" placeholder="3.50" required>
+                        </div>
+                        <div class="field">
+                            <label for="p-price-syp">السعر بالليرة السورية <span class="de">Preis in SYP</span></label>
+                            <input type="number" id="p-price-syp" min="0" inputmode="numeric" placeholder="250000">
+                        </div>
+                        <div class="field">
+                            <label for="p-discount">الخصم % <span class="de">Rabatt in %</span></label>
+                            <input type="number" id="p-discount" step="1" min="0" max="90" value="0" inputmode="numeric">
+                            <small class="muted">0 = بدون خصم. أكبر من 0: يظهر في "العروض الخاصة". · ab 1 % unter Angebote</small>
+                        </div>
+                        <div class="field">
+                            <span class="label">السعر بعد الخصم <span class="de">Preis nach Rabatt</span></span>
+                            <p class="price-preview" id="p-discount-preview">-</p>
+                        </div>
+                        <div class="field">
+                            <label for="p-category">القسم <span class="de">Kategorie</span></label>
+                            <select id="p-category">
+                                <option value="offers">العروض الخاصة · Angebote</option>
+                                <option value="serums">السيرومات · Seren</option>
+                                <option value="masks">الماسكات · Masken</option>
+                                <option value="eyes">لزقات العين · Augenpads</option>
+                                <option value="creams">الكريمات · Cremes</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="p-sort-order">الترتيب <span class="de">Reihenfolge</span></label>
+                            <input type="number" id="p-sort-order" step="1" value="0" inputmode="numeric">
+                            <small class="muted">الأصغر يظهر أولاً · kleinere Zahl = weiter vorne</small>
+                        </div>
+                    </div>
+
+                    <label class="check">
+                        <input type="checkbox" id="p-active" checked>
+                        <span>المنتج ظاهر في المتجر <span class="de">Im Shop sichtbar</span></span>
+                    </label>
+
+                    <fieldset class="lang-block">
+                        <legend>الاسم والوصف الأساسي <span class="de">Name und Beschreibung (Standard)</span></legend>
+                        <div class="field">
+                            <label for="p-name">اسم المنتج <span class="de">Name</span> *</label>
+                            <input type="text" id="p-name" maxlength="160" required>
+                        </div>
+                        <div class="field">
+                            <label for="p-desc">الوصف <span class="de">Beschreibung</span></label>
+                            <textarea id="p-desc" rows="3" maxlength="4000"></textarea>
+                        </div>
+                    </fieldset>
+
+                    <details class="lang-block" id="lang-details">
+                        <summary>النصوص حسب اللغة <span class="de">Texte je Sprache (optional)</span></summary>
+                        <div class="grid-2">
+                            <div class="field"><label for="p-name-ar">الاسم بالعربية</label><input type="text" id="p-name-ar" maxlength="160"></div>
+                            <div class="field"><label for="p-desc-ar">الوصف بالعربية</label><textarea id="p-desc-ar" rows="3" maxlength="4000"></textarea></div>
+                            <div class="field"><label for="p-name-en">English name</label><input type="text" id="p-name-en" maxlength="160" dir="ltr"></div>
+                            <div class="field"><label for="p-desc-en">English description</label><textarea id="p-desc-en" rows="3" maxlength="4000" dir="ltr"></textarea></div>
+                            <div class="field"><label for="p-name-de">Deutscher Name</label><input type="text" id="p-name-de" maxlength="160" dir="ltr"></div>
+                            <div class="field"><label for="p-desc-de">Deutsche Beschreibung</label><textarea id="p-desc-de" rows="3" maxlength="4000" dir="ltr"></textarea></div>
+                        </div>
+                    </details>
+
+                    <p class="msg" id="product-msg" role="status" hidden></p>
+                    <button type="submit" class="btn btn-primary btn-block" id="product-submit-btn">إضافة المنتج <span class="de">Produkt speichern</span></button>
+                </form>
+            </section>
+
+            <!-- Product list -->
+            <section class="card" id="products-card">
+                <div class="card-head">
+                    <h2>المنتجات <span class="de">Produkte</span> (<span id="product-count">0</span>)</h2>
+                </div>
+                <input type="search" id="product-filter" class="filter" placeholder="بحث · Suchen" aria-label="Produkte suchen">
+                <ul class="product-list" id="product-list"></ul>
+            </section>
+
+            <!-- Settings -->
+            <section class="card" id="settings-card">
+                <h2>إعدادات المتجر <span class="de">Shop-Einstellungen</span></h2>
+                <form id="settings-form" novalidate>
+                    <div class="field">
+                        <label for="s-whatsapp">رقم واتساب للطلبات <span class="de">WhatsApp-Nummer</span></label>
+                        <input type="tel" id="s-whatsapp" inputmode="tel" dir="ltr" placeholder="4917012345678">
+                        <small class="muted">الرقم الدولي بدون + وبدون مسافات · international, ohne + und Leerzeichen</small>
+                    </div>
+                    <div class="field">
+                        <label for="s-order-email">بريد الطلبات <span class="de">Bestell-E-Mail</span></label>
+                        <input type="email" id="s-order-email" dir="ltr" placeholder="orders@example.com">
+                    </div>
+                    <div class="field">
+                        <label for="s-contact-email">بريد التواصل <span class="de">Kontakt-E-Mail</span></label>
+                        <input type="email" id="s-contact-email" dir="ltr" placeholder="contact@example.com">
+                    </div>
+                    <p class="msg" id="settings-msg" role="status" hidden></p>
+                    <button type="submit" class="btn btn-primary" id="settings-btn">حفظ <span class="de">Speichern</span></button>
+                </form>
+            </section>
+
+            <!-- Import -->
+            <section class="card" id="import-card">
+                <h2>الاستيراد من Appwrite <span class="de">Aus Appwrite übernehmen</span></h2>
+                <p class="muted">ينقل جميع المنتجات والصور والإعدادات من Appwrite مرة واحدة. يمكن تكراره بأمان: المنتجات المستوردة سابقاً يتم تحديثها فقط. · Übernimmt alle Produkte, Fotos und Einstellungen einmalig. Wiederholen ist gefahrlos: Bereits übernommene Produkte werden nur aktualisiert.</p>
+                <button type="button" class="btn btn-primary" id="import-btn">استيراد الآن <span class="de">Jetzt importieren</span></button>
+                <div class="progress" id="import-progress" hidden><div class="progress-bar" id="import-bar"></div></div>
+                <p class="msg" id="import-msg" role="status" hidden></p>
+                <ul class="import-log" id="import-log"></ul>
+            </section>
+
+            <!-- Backup -->
+            <section class="card" id="backup-card">
+                <h2>النسخ الاحتياطي <span class="de">Sicherung</span></h2>
+                <p class="muted">يحفظ كل المنتجات والإعدادات في ملف على جهازك. الصور تبقى في قاعدة البيانات. · Speichert Produkte und Einstellungen als Datei. Fotos bleiben in der Datenbank.</p>
+                <div class="row">
+                    <button type="button" class="btn btn-primary" id="backup-btn">تنزيل نسخة <span class="de">Sicherung herunterladen</span></button>
+                    <label class="btn btn-ghost file-btn">
+                        استعادة من ملف <span class="de">Wiederherstellen</span>
+                        <input type="file" id="restore-file" accept="application/json,.json">
+                    </label>
+                </div>
+                <p class="msg" id="backup-msg" role="status" hidden></p>
+            </section>
+
+            <!-- Log -->
+            <section class="card" id="log-card">
+                <div class="card-head">
+                    <h2>سجل التغييرات <span class="de">Änderungsprotokoll</span></h2>
+                    <button type="button" class="btn btn-ghost btn-sm" id="log-refresh">تحديث <span class="de">Neu laden</span></button>
+                </div>
+                <ul class="log-list" id="log-list"></ul>
+            </section>
+        </main>
     </div>
 
-    <div class="admin-container" id="admin-content" style="display: none;">
-        <div class="header">
-            <h1>إدارة المتجر - Mais Beauty</h1>
-            <div>
-                <button id="logout-btn" class="btn btn-danger" style="margin-left: 10px;">تسجيل خروج</button>
-                <a href="index.html" class="btn">العودة للمتجر</a>
-            </div>
-        </div>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
-        <div class="card">
-            <h2>إعدادات المتجر (Shop Settings)</h2>
-            <form id="shop-settings-form">
-                <div class="form-group">
-                    <label for="shop-whatsapp-number">WhatsApp-Nummer für Bestellungen</label>
-                    <input type="text" id="shop-whatsapp-number" inputmode="tel" autocomplete="tel" placeholder="9639... oder 4917...">
-                    <small style="color: #888;">Internationale Nummer ohne + und ohne Leerzeichen.</small>
-                </div>
-                <div class="form-group">
-                    <label for="shop-order-email">Bestell-E-Mail-Adresse</label>
-                    <input type="email" id="shop-order-email" autocomplete="email" placeholder="orders@example.com">
-                </div>
-                <div class="form-group">
-                    <label for="shop-contact-email">Footer/Kontakt-E-Mail-Adresse</label>
-                    <input type="email" id="shop-contact-email" autocomplete="email" placeholder="contact@example.com">
-                </div>
-                <button type="submit" id="save-shop-settings-btn" class="btn">Shop Settings speichern</button>
-            </form>
-        </div>
-
-        <div class="card">
-            <h2 id="form-title">إضافة منتج جديد</h2>
-            <div id="edit-mode-banner" class="edit-mode-banner"></div>
-            <form id="add-product-form">
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>السعر بالدولار ($)</label>
-                        <input type="number" id="p-price-usd" step="0.01" min="0" placeholder="مثال: 3.50" required>
-                        <small style="color: #888;">سيتم حفظه كـ Cents في Appwrite</small>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>السعر بالليرة السورية (SYP)</label>
-                        <input type="number" id="p-price-syp" placeholder="مثال: 250000">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="p-discount">الخصم % (Rabatt in %)</label>
-                        <input type="number" id="p-discount" step="1" min="0" max="90" value="0" inputmode="numeric" placeholder="0">
-                        <small style="color: #888;">0 = بدون خصم. أي خصم أكبر من 0 يُظهر المنتج تلقائياً في "العروض الخاصة". (0 = kein Rabatt; ab 1 % erscheint das Produkt unter Angebote)</small>
-                    </div>
-                    <div class="form-group">
-                        <label>السعر بعد الخصم (Preis nach Rabatt)</label>
-                        <p id="p-discount-preview" style="margin:0; padding: 12px 0; font-weight: 700; color: #B4233C;">-</p>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>صورة المنتج (Product Image)</label>
-                    <input type="file" id="p-image-file" accept="image/*" style="padding: 10px; background: #fff;">
-                    <small style="color: #888;">في حالة التعديل: اتركه فارغاً للإبقاء على الصورة الحالية.</small>
-                </div>
-
-                <div class="lang-section">
-                    <h3 style="margin-top: 0; color: var(--color-gold);">تفاصيل المنتج (Product Details)</h3>
-                    <div class="form-group">
-                        <label>اسم المنتج (Name)</label>
-                        <input type="text" id="p-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label>الوصف (Description)</label>
-                        <textarea id="p-desc" rows="3" required></textarea>
-                    </div>
-                </div>
-
-                <div class="lang-section">
-                    <h3 style="margin-top: 0; color: var(--color-gold);">النصوص حسب اللغة (Localized Text)</h3>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>الاسم بالعربية (nameAr)</label>
-                            <input type="text" id="p-name-ar">
-                        </div>
-                        <div class="form-group">
-                            <label>الوصف بالعربية (descriptionAr)</label>
-                            <textarea id="p-desc-ar" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>English Name (nameEn)</label>
-                            <input type="text" id="p-name-en">
-                        </div>
-                        <div class="form-group">
-                            <label>English Description (descriptionEn)</label>
-                            <textarea id="p-desc-en" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Deutscher Name (nameDe)</label>
-                            <input type="text" id="p-name-de">
-                        </div>
-                        <div class="form-group">
-                            <label>Deutsche Beschreibung (descriptionDe)</label>
-                            <textarea id="p-desc-de" rows="3"></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-row" style="margin-top: 10px;">
-                    <div class="form-group">
-                        <label>الترتيب (Sort Order)</label>
-                        <input type="number" id="p-sort-order" step="1" min="0" value="0">
-                    </div>
-                    <div class="form-group">
-                        <label>القسم / Kategorie</label>
-                        <select id="p-category">
-                            <option value="offers">offers</option>
-                            <option value="serums">serums</option>
-                            <option value="masks">masks</option>
-                            <option value="eyes">eyes</option>
-                            <option value="creams">creams</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-row" style="margin-top: 10px;">
-                    <div class="form-group" style="display:flex; align-items:center; gap:10px; padding-top:28px;">
-                        <input type="checkbox" id="p-active" checked style="width:auto; margin:0;">
-                        <label for="p-active" style="margin:0; font-weight:normal;">المنتج نشط (active)</label>
-                    </div>
-                </div>
-
-                <div style="display:flex; gap:10px; margin-top:10px;">
-                    <button type="submit" id="form-submit-btn" class="btn" style="flex:1; padding: 15px; font-size: 1.1rem;">إضافة المنتج</button>
-                    <button type="button" id="cancel-edit-btn" class="btn btn-secondary" style="display:none; padding: 15px;">إلغاء التعديل</button>
-                </div>
-            </form>
-        </div>
-
-        <div class="card">
-            <h2>المنتجات الحالية (<span id="product-count">0</span>)</h2>
-            <div id="product-list" class="product-list">
-                <!-- Products will be listed here -->
-            </div>
-        </div>
-    </div>
-
-    <script type="module" src="admin.js?v=4"></script>
+    <script type="module" src="admin.js?v=5"></script>
 </body>
 </html>
