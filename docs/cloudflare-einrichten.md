@@ -49,7 +49,21 @@ Einstellungen gelten erst für neue Bereitstellungen:
 ## 6. Live schalten
 
 Wenn alles passt, den Branch in `main` übernehmen. Ab dann zeigt `mais-beauty-shop.pages.dev`
-die neue Version mit derselben Datenbank. Appwrite kann danach gekündigt oder liegen gelassen werden.
+die neue Version mit derselben Datenbank.
+
+## Parallelbetrieb mit der alten Seite (Strato + Appwrite)
+
+- Der Import **kopiert** nur. Er liest aus Appwrite und ändert oder löscht dort nichts.
+  Er hat keinen Appwrite-Schlüssel und könnte gar nicht schreiben.
+- Die alte Seite auf Strato läuft weiter mit Appwrite, wie bisher.
+  Appwrite verlangt dafür weiter die wöchentliche Bestätigung.
+- **Die beiden Datenbestände sind getrennt.** Änderungen im neuen Admin erscheinen nicht auf der alten Seite
+  und umgekehrt.
+- **Empfehlung für die Übergangszeit:** Produkte weiter im alten Admin pflegen und vor dem Prüfen der
+  Cloudflare-Seite erneut „Jetzt importieren“ drücken.
+  **Achtung:** Ein erneuter Import überschreibt bei importierten Produkten Änderungen, die im neuen Admin
+  gemacht wurden. Produkte, die nur im neuen Admin angelegt wurden, bleiben erhalten.
+- Sobald die neue Seite die Hauptseite ist, nur noch im neuen Admin pflegen und nicht mehr importieren.
 
 ## Hilfe für Mais
 
