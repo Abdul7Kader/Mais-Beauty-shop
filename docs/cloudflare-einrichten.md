@@ -1,5 +1,7 @@
 # Cloudflare einrichten (einmalig, ca. 10 Minuten)
 
+Stand der Entwicklung und offene Punkte: [UEBERGABE.md](UEBERGABE.md).
+
 Der Shop speichert Produkte, Einstellungen, Fotos und das Änderungsprotokoll in einer
 Cloudflare-D1-Datenbank. Appwrite wird danach nicht mehr gebraucht.
 
