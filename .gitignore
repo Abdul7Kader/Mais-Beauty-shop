@@ -3,3 +3,6 @@ venv/
 __pycache__/
 .env
 diff_output.txt
+.dev.vars
+.wrangler/
+node_modules/

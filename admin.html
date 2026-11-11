@@ -165,6 +165,29 @@
             margin-bottom: 20px;
         }
 
+        .setup-hint {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: var(--radius);
+            padding: 10px;
+            color: #856404;
+            font-size: 0.9rem;
+            direction: ltr;
+        }
+
+        .import-log {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            padding: 10px;
+            max-height: 300px;
+            overflow: auto;
+            white-space: pre-wrap;
+            direction: ltr;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+
         @media (max-width: 600px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -193,8 +216,8 @@
     <div id="login-container" class="card" style="max-width: 400px; margin: 100px auto; text-align: center;">
         <h2 style="color: var(--color-gold); font-family: 'Cinzel', serif;">Mais Beauty Admin</h2>
         <p style="margin-bottom: 20px;">الرجاء تسجيل الدخول</p>
-        <input type="email" id="admin-email" placeholder="البريد الإلكتروني (Email)" style="margin-bottom: 15px; text-align: center;" required>
-        <input type="password" id="admin-password" placeholder="كلمة السر (Password)" style="margin-bottom: 15px; text-align: center;" required>
+        <p id="setup-hint" class="setup-hint" style="display: none;"></p>
+        <input type="password" id="admin-password" placeholder="كلمة السر (Password)" autocomplete="current-password" style="margin-bottom: 15px; text-align: center;" required>
         <button id="login-btn" class="btn" style="width: 100%;">دخول</button>
         <p id="login-error" style="color: red; display: none; margin-top: 10px;">بيانات الدخول غير صحيحة!</p>
         <a href="index.html" style="display: block; margin-top: 15px; font-size: 0.9rem;">العودة للمتجر</a>
@@ -238,7 +261,7 @@
                     <div class="form-group">
                         <label>السعر بالدولار ($)</label>
                         <input type="number" id="p-price-usd" step="0.01" min="0" placeholder="مثال: 3.50" required>
-                        <small style="color: #888;">سيتم حفظه كـ Cents في Appwrite</small>
+                        <small style="color: #888;">سيتم حفظه كـ Cents</small>
                     </div>
                     
                     <div class="form-group">
@@ -331,6 +354,13 @@
         </div>
 
         <div class="card">
+            <h2>نقل البيانات من Appwrite (Umzug aus Appwrite)</h2>
+            <p>Einmalig: übernimmt alle Produkte, Fotos und Shop-Einstellungen aus der alten Appwrite-Datenbank nach Cloudflare. Bereits vorhandene Produkte werden nicht überschrieben, der Import kann also gefahrlos wiederholt werden.</p>
+            <button type="button" id="import-appwrite-btn" class="btn">Aus Appwrite importieren</button>
+            <pre id="import-log" class="import-log" style="display: none;"></pre>
+        </div>
+
+        <div class="card">
             <h2>المنتجات الحالية (<span id="product-count">0</span>)</h2>
             <div id="product-list" class="product-list">
                 <!-- Products will be listed here -->
@@ -338,6 +368,6 @@
         </div>
     </div>
 
-    <script type="module" src="admin.js?v=4"></script>
+    <script type="module" src="admin.js?v=5"></script>
 </body>
 </html>

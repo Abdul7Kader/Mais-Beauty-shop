@@ -1,5 +1,3 @@
-import { Client, Account, Databases, Storage, ID, Query } from "https://cdn.jsdelivr.net/npm/appwrite@17.0.0/+esm";
-
 /**
  * Komprimiert ein Bild clientseitig per Canvas API.
  * Max. 1200x1200px, Qualität ~0.80, WebP wenn möglich sonst JPEG.
@@ -45,7 +43,9 @@ async function compressImage(file) {
                 } else {
                     // WebP fehlgeschlagen oder nicht kleiner -> JPEG Fallback
                     canvas.toBlob((jpegBlob) => {
-                        if (jpegBlob && jpegBlob.size < file.size) {
+                        // Formate, die der Server nicht annimmt (z. B. HEIC), immer als JPEG speichern
+                        const originalAllowed = ['image/webp', 'image/jpeg', 'image/png', 'image/gif', 'image/avif'].includes(file.type);
+                        if (jpegBlob && (jpegBlob.size < file.size || !originalAllowed)) {
                             const baseName = file.name.replace(/\.[^.]+$/, '');
                             const compressedFile = new File([jpegBlob], `${baseName}.jpg`, { type: 'image/jpeg' });
                             console.log(`[Kompression] Original: ${(file.size / 1024).toFixed(1)} KB -> Komprimiert (JPEG): ${(jpegBlob.size / 1024).toFixed(1)} KB`);
@@ -70,13 +70,40 @@ async function compressImage(file) {
     });
 }
 
-// Appwrite Setup
-const appwriteClient = new Client()
-    .setEndpoint('https://fra.cloud.appwrite.io/v1')
-    .setProject('6a0d8738002fb76a4caf');
-const account = new Account(appwriteClient);
-const databases = new Databases(appwriteClient);
-const appwriteStorage = new Storage(appwriteClient);
+// Admin-Schnittstellen in Cloudflare (functions/api/admin/*)
+async function api(path, options = {}) {
+    const response = await fetch(path, {
+        credentials: 'same-origin',
+        ...options,
+        headers: { accept: 'application/json', ...(options.headers || {}) }
+    });
+    let data = {};
+    try {
+        data = await response.json();
+    } catch (parseError) {
+        data = {};
+    }
+    if (!response.ok) {
+        const error = new Error(data.error || `Fehler ${response.status}`);
+        error.status = response.status;
+        throw error;
+    }
+    return data;
+}
+
+function sendJson(path, method, body) {
+    return api(path, {
+        method,
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(body)
+    });
+}
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[c]);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('add-product-form');
@@ -92,42 +119,86 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderEmailInput = document.getElementById('shop-order-email');
     const contactEmailInput = document.getElementById('shop-contact-email');
     const saveShopSettingsBtn = document.getElementById('save-shop-settings-btn');
+    const importBtn = document.getElementById('import-appwrite-btn');
+    const importLog = document.getElementById('import-log');
     const validCategories = ['offers', 'serums', 'masks', 'eyes', 'creams'];
 
     // State: welches Produkt wird gerade bearbeitet (null = neues Produkt)
     let editProductId = null;
-    let editProductOldImageFileId = null;
+    let products = [];
 
-    // Admin Login Logic (Appwrite Auth)
+    // Admin-Anmeldung (Passwort aus dem Cloudflare-Secret ADMIN_PASSWORD)
     const loginContainer = document.getElementById('login-container');
     const adminContent = document.getElementById('admin-content');
     const loginBtn = document.getElementById('login-btn');
     const loginError = document.getElementById('login-error');
-    const emailInput = document.getElementById('admin-email');
+    const setupHint = document.getElementById('setup-hint');
     const passInput = document.getElementById('admin-password');
     const logoutBtn = document.getElementById('logout-btn');
 
-    function attemptLogin() {
-        const email = emailInput.value;
-        const pass = passInput.value;
-        
+    function showLogin(message) {
+        loginContainer.style.display = 'block';
+        adminContent.style.display = 'none';
+        if (message) {
+            loginError.style.display = 'block';
+            loginError.textContent = message;
+        }
+    }
+
+    function showAdmin() {
+        loginContainer.style.display = 'none';
+        adminContent.style.display = 'block';
+        loadShopSettings();
+        fetchAdminProducts();
+    }
+
+    function handleApiError(error, fallbackText) {
+        console.error(error);
+        if (error.status === 401) {
+            showLogin('انتهت الجلسة، الرجاء تسجيل الدخول من جديد. (Sitzung abgelaufen)');
+            return;
+        }
+        alert(`${fallbackText}\n${error.message}`);
+    }
+
+    async function checkAuthState() {
+        try {
+            const state = await api('/api/admin/me');
+            const missing = [];
+            if (!state.passwordConfigured) missing.push('Secret ADMIN_PASSWORD');
+            if (!state.databaseConfigured) missing.push('D1-Binding DB');
+            if (!state.imagesConfigured) missing.push('R2-Binding BILDER');
+            if (missing.length) {
+                setupHint.style.display = 'block';
+                setupHint.textContent = `Einrichtung in Cloudflare unvollständig, es fehlt: ${missing.join(', ')}`;
+            } else {
+                setupHint.style.display = 'none';
+            }
+            if (state.loggedIn) showAdmin();
+            else showLogin();
+        } catch (error) {
+            console.error(error);
+            showLogin('الخادم غير متاح. (Server nicht erreichbar)');
+        }
+    }
+
+    async function attemptLogin() {
         loginBtn.textContent = 'جاري التحقق...';
         loginBtn.disabled = true;
-
-        account.createEmailPasswordSession(email, pass)
-            .then((session) => {
-                loginError.style.display = 'none';
-                checkAuthState(); // Appwrite doesn't have an auth state listener, so we trigger manual check
-            })
-            .catch((error) => {
-                loginError.style.display = 'block';
-                loginError.textContent = 'بيانات الدخول غير صحيحة أو الحساب غير موجود.';
-                console.error(error);
-            })
-            .finally(() => {
-                loginBtn.textContent = 'دخول';
-                loginBtn.disabled = false;
-            });
+        try {
+            await sendJson('/api/admin/login', 'POST', { password: passInput.value });
+            loginError.style.display = 'none';
+            passInput.value = '';
+            showAdmin();
+        } catch (error) {
+            loginError.style.display = 'block';
+            loginError.textContent = error.status === 401
+                ? 'كلمة السر غير صحيحة. (Passwort falsch)'
+                : error.message;
+        } finally {
+            loginBtn.textContent = 'دخول';
+            loginBtn.disabled = false;
+        }
     }
 
     loginBtn.addEventListener('click', attemptLogin);
@@ -135,32 +206,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') attemptLogin();
     });
 
-    logoutBtn.addEventListener('click', () => {
-        account.deleteSession('current')
-            .then(() => checkAuthState())
-            .catch(console.error);
+    logoutBtn.addEventListener('click', async () => {
+        try {
+            await api('/api/admin/logout', { method: 'POST' });
+        } catch (error) {
+            console.error(error);
+        }
+        showLogin();
     });
-
-    // Check Auth State manually for Appwrite
-    function checkAuthState() {
-        account.get()
-            .then((user) => {
-                loginContainer.style.display = 'none';
-                adminContent.style.display = 'block';
-            })
-            .catch((err) => {
-                // Not logged in
-                loginContainer.style.display = 'block';
-                adminContent.style.display = 'none';
-            });
-    }
 
     // Bearbeitungsmodus aktivieren
     function enterEditMode(product) {
         editProductId = product.id;
-        editProductOldImageFileId = product.imageFileId || null;
 
-        // Formular befüllen
         document.getElementById('p-name').value = product.name || '';
         document.getElementById('p-desc').value = product.description || '';
         document.getElementById('p-name-ar').value = product.nameAr || '';
@@ -174,23 +232,20 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('p-sort-order').value = product.sortOrder ?? 0;
         categorySelect.value = validCategories.includes(product.category) ? product.category : 'offers';
         document.getElementById('p-active').checked = product.active !== false;
-        document.getElementById('p-image-file').value = ''; // Zurücksetzen
+        document.getElementById('p-image-file').value = '';
 
-        // UI umschalten
         formTitle.textContent = 'تعديل منتج';
         editBanner.style.display = 'block';
         editBanner.textContent = `جاري تعديل: ${product.name}`;
         submitBtn.textContent = 'حفظ التعديلات';
         cancelBtn.style.display = 'block';
 
-        // Zum Formular scrollen
         form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     // Bearbeitungsmodus beenden
     function exitEditMode() {
         editProductId = null;
-        editProductOldImageFileId = null;
         form.reset();
         document.getElementById('p-active').checked = true;
         document.getElementById('p-sort-order').value = 0;
@@ -204,274 +259,186 @@ document.addEventListener('DOMContentLoaded', () => {
 
     cancelBtn.addEventListener('click', exitEditMode);
 
-    // Initial check on load
-    checkAuthState();
-
+    // Shop-Einstellungen
     async function loadShopSettings() {
         try {
-            const settings = await databases.getDocument('mais_beauty_db', 'shop_settings', 'main');
+            const settings = await api('/api/admin/settings');
             whatsappNumberInput.value = settings.whatsappNumber || '';
             orderEmailInput.value = settings.orderEmail || '';
             contactEmailInput.value = settings.contactEmail || '';
         } catch (error) {
-            if (error.code === 404) {
-                try {
-                    await databases.createDocument('mais_beauty_db', 'shop_settings', 'main', {
-                        whatsappNumber: '',
-                        orderEmail: '',
-                        contactEmail: ''
-                    });
-                    whatsappNumberInput.value = '';
-                    orderEmailInput.value = '';
-                    contactEmailInput.value = '';
-                    return;
-                } catch (createError) {
-                    console.error('Error creating shop settings:', createError);
-                }
-            }
-
-            console.error('Error fetching shop settings:', error);
+            handleApiError(error, 'Shop Settings konnten nicht geladen werden.');
         }
     }
 
     shopSettingsForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const whatsappNumber = whatsappNumberInput.value.trim().replace(/\s+/g, '').replace(/^\+/, '');
-        const orderEmail = orderEmailInput.value.trim();
-        const contactEmail = contactEmailInput.value.trim();
         saveShopSettingsBtn.disabled = true;
-
         try {
-            const settings = await databases.updateDocument('mais_beauty_db', 'shop_settings', 'main', {
-                whatsappNumber,
-                orderEmail,
-                contactEmail
+            const settings = await sendJson('/api/admin/settings', 'PUT', {
+                whatsappNumber: whatsappNumberInput.value,
+                orderEmail: orderEmailInput.value,
+                contactEmail: contactEmailInput.value
             });
             whatsappNumberInput.value = settings.whatsappNumber || '';
             orderEmailInput.value = settings.orderEmail || '';
             contactEmailInput.value = settings.contactEmail || '';
             alert('Shop Settings gespeichert.');
         } catch (error) {
-            console.error('Error saving shop settings:', error);
-            alert('Shop Settings konnten nicht gespeichert werden.');
+            handleApiError(error, 'Shop Settings konnten nicht gespeichert werden.');
         } finally {
             saveShopSettingsBtn.disabled = false;
         }
     });
 
-    loadShopSettings();
-
-    // Fetch products from Appwrite
-    let products = [];
-
+    // Produkte laden
     async function fetchAdminProducts() {
         try {
-            const response = await databases.listDocuments('mais_beauty_db', 'products', [
-                Query.limit(100),
-                Query.orderAsc('sortOrder')
-            ]);
-            products = response.documents.map(doc => ({ id: doc.$id, ...doc }));
+            const response = await api('/api/admin/products');
+            products = response.products || [];
             renderAdminProducts();
         } catch (error) {
-            console.error("Error fetching products:", error);
+            handleApiError(error, 'Produkte konnten nicht geladen werden.');
         }
     }
-    
-    // Listen to Realtime updates
-    appwriteClient.subscribe('databases.mais_beauty_db.collections.products.documents', response => {
-        if (response.events.includes('databases.*.collections.*.documents.*.create') ||
-            response.events.includes('databases.*.collections.*.documents.*.update') ||
-            response.events.includes('databases.*.collections.*.documents.*.delete')) {
-            fetchAdminProducts();
-        }
-    });
 
-    // initial fetch
-    fetchAdminProducts();
-
-    // Render existing products
     function renderAdminProducts() {
         productList.innerHTML = '';
         productCount.textContent = products.length;
 
         if (products.length === 0) {
-            productList.innerHTML = '<p style="text-align:center; color:#888;">\u0644\u0627 \u064a\u0648\u062c\u062f \u0645\u0646\u062a\u062c\u0627\u062a \u0645\u0636\u0627\u0641\u0629 \u0628\u0639\u062f.</p>';
+            productList.innerHTML = '<p style="text-align:center; color:#888;">لا يوجد منتجات مضافة بعد.</p>';
             return;
         }
 
-        // Reverse array to show newest first
+        // Neueste zuerst
         [...products].reverse().forEach((p) => {
             const div = document.createElement('div');
             div.className = 'product-item';
 
-            const activeLabel = p.active !== false ? '\u2705 \u0646\u0634\u0637' : '\u274C \u0645\u062e\u0641\u064a';
+            const activeLabel = p.active !== false ? '✅ نشط' : '❌ مخفي';
             const categoryLabel = validCategories.includes(p.category) ? p.category : 'offers';
 
             div.innerHTML = `
                 <div style="display:flex; align-items:center;">
-                    <img src="${p.imageUrl}" alt="Product Image" onerror="this.onerror=null;this.style.display='none';">
+                    <img src="${escapeHtml(p.imageUrl)}" alt="Product Image" onerror="this.onerror=null;this.style.display='none';">
                     <div class="product-info">
-                        <h3>${p.name}</h3>
-                        <p>$${((p.priceUsdCents || 0) / 100).toFixed(2)} | SYP ${p.priceSyp} | Kategorie: ${categoryLabel} | Sortierung: ${p.sortOrder ?? 0} | ${activeLabel}</p>
+                        <h3>${escapeHtml(p.name)}</h3>
+                        <p>$${((p.priceUsdCents || 0) / 100).toFixed(2)} | SYP ${escapeHtml(p.priceSyp)} | Kategorie: ${categoryLabel} | Sortierung: ${escapeHtml(p.sortOrder ?? 0)} | ${activeLabel}</p>
                     </div>
                 </div>
                 <div style="display:flex; gap:8px;">
-                    <button class="btn btn-edit" data-edit-id="${p.id}">\u062a\u0639\u062f\u064a\u0644</button>
-                    <button class="btn btn-danger" data-delete-id="${p.id}" data-image-id="${p.imageFileId}">\u062d\u0630\u0641</button>
+                    <button class="btn btn-edit" type="button" data-edit>تعديل</button>
+                    <button class="btn btn-danger" type="button" data-delete>حذف</button>
                 </div>
             `;
 
-            // Bearbeiten-Button
-            div.querySelector('[data-edit-id]').addEventListener('click', () => enterEditMode(p));
-
-            // Löschen-Button
-            div.querySelector('[data-delete-id]').addEventListener('click', () => {
-                deleteProduct(p.id, p.imageFileId);
-            });
+            div.querySelector('[data-edit]').addEventListener('click', () => enterEditMode(p));
+            div.querySelector('[data-delete]').addEventListener('click', () => deleteProduct(p.id));
 
             productList.appendChild(div);
         });
     }
 
-    // Handle Form Submission (Create & Update)
+    // Produkt anlegen oder bearbeiten
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // --- Validierung ---
         const name = document.getElementById('p-name').value.trim();
-        if (!name) { alert('\u0627\u0644\u0627\u0633\u0645 \u0644\u0627 \u064a\u0645\u0643\u0646 \u0623\u0646 \u064a\u0643\u0648\u0646 \u0641\u0627\u0631\u063a\u0627\u064b.'); return; }
+        if (!name) { alert('الاسم لا يمكن أن يكون فارغاً.'); return; }
 
         const priceUSD = parseFloat(document.getElementById('p-price-usd').value);
-        if (isNaN(priceUSD) || priceUSD < 0) { alert('\u0627\u0644\u0633\u0639\u0631 \u0628\u0627\u0644\u062f\u0648\u0644\u0627\u0631 \u063a\u064a\u0631 \u0635\u0627\u0644\u062d.'); return; }
+        if (isNaN(priceUSD) || priceUSD < 0) { alert('السعر بالدولار غير صالح.'); return; }
 
-        const priceUsdCents = Math.round(priceUSD * 100);
-        const priceSyp = parseInt(document.getElementById('p-price-syp').value, 10) || 0;
-        const sortOrder = parseInt(document.getElementById('p-sort-order').value, 10) || 0;
-        const category = validCategories.includes(categorySelect.value) ? categorySelect.value : 'offers';
-        const active = document.getElementById('p-active').checked;
-        const description = document.getElementById('p-desc').value.trim();
-        const nameAr = document.getElementById('p-name-ar').value.trim();
-        const descriptionAr = document.getElementById('p-desc-ar').value.trim();
-        const nameEn = document.getElementById('p-name-en').value.trim();
-        const descriptionEn = document.getElementById('p-desc-en').value.trim();
-        const nameDe = document.getElementById('p-name-de').value.trim();
-        const descriptionDe = document.getElementById('p-desc-de').value.trim();
-        const fileInput = document.getElementById('p-image-file');
-        const file = fileInput.files[0] || null;
-
-        // Im Erstellmodus muss ein Bild gewählt sein
+        const file = document.getElementById('p-image-file').files[0] || null;
         if (!editProductId && !file) {
-            alert('\u0627\u0644\u0631\u062c\u0627\u0621 \u0627\u062e\u062a\u0627\u0631 \u0635\u0648\u0631\u0629!');
+            alert('الرجاء اختار صورة!');
             return;
         }
 
+        const data = new FormData();
+        data.set('name', name);
+        data.set('description', document.getElementById('p-desc').value.trim());
+        data.set('nameAr', document.getElementById('p-name-ar').value.trim());
+        data.set('descriptionAr', document.getElementById('p-desc-ar').value.trim());
+        data.set('nameEn', document.getElementById('p-name-en').value.trim());
+        data.set('descriptionEn', document.getElementById('p-desc-en').value.trim());
+        data.set('nameDe', document.getElementById('p-name-de').value.trim());
+        data.set('descriptionDe', document.getElementById('p-desc-de').value.trim());
+        data.set('priceUsdCents', String(Math.round(priceUSD * 100)));
+        data.set('priceSyp', String(parseInt(document.getElementById('p-price-syp').value, 10) || 0));
+        data.set('sortOrder', String(parseInt(document.getElementById('p-sort-order').value, 10) || 0));
+        data.set('category', validCategories.includes(categorySelect.value) ? categorySelect.value : 'offers');
+        data.set('active', document.getElementById('p-active').checked ? 'true' : 'false');
+
         submitBtn.disabled = true;
         const originalText = submitBtn.textContent;
-        submitBtn.textContent = '\u062c\u0627\u0631\u064a... \u064a\u064f\u0631\u062c\u0649 \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631';
+        submitBtn.textContent = 'جاري... يُرجى الانتظار';
 
         try {
-            if (editProductId) {
-                // === BEARBEITEN-MODUS ===
-                const updateData = {
-                    name,
-                    description,
-                    nameAr,
-                    descriptionAr,
-                    nameEn,
-                    descriptionEn,
-                    nameDe,
-                    descriptionDe,
-                    priceUsdCents,
-                    priceSyp,
-                    sortOrder,
-                    category,
-                    active
-                };
-
-                if (file) {
-                    // Neues Bild: komprimieren, hochladen, URLs aktualisieren
-                    const compressedFile = await compressImage(file);
-                    const upload = await appwriteStorage.createFile('product_images', ID.unique(), compressedFile);
-                    const newImageUrl = appwriteStorage.getFileView('product_images', upload.$id);
-                    updateData.imageFileId = upload.$id;
-                    updateData.imageUrl = newImageUrl.toString();
-
-                    // Dokument aktualisieren
-                    await databases.updateDocument('mais_beauty_db', 'products', editProductId, updateData);
-
-                    // Altes Bild erst NACH erfolgreichem Update löschen
-                    if (editProductOldImageFileId && editProductOldImageFileId !== 'undefined') {
-                        try {
-                            await appwriteStorage.deleteFile('product_images', editProductOldImageFileId);
-                        } catch (imgErr) {
-                            console.warn('[Edit] Altes Bild konnte nicht gelöscht werden:', imgErr);
-                        }
-                    }
-                } else {
-                    // Kein neues Bild: Dokument ohne Bild-Änderung aktualisieren
-                    await databases.updateDocument('mais_beauty_db', 'products', editProductId, updateData);
-                }
-
-                exitEditMode();
-                alert('\u062a\u0645 \u062a\u062d\u062f\u064a\u062b \u0627\u0644\u0645\u0646\u062a\u062c \u0628\u0646\u062c\u0627\u062d!');
-
-            } else {
-                // === ERSTELLEN-MODUS ===
+            if (file) {
                 const compressedFile = await compressImage(file);
-                const upload = await appwriteStorage.createFile('product_images', ID.unique(), compressedFile);
-                const imageUrl = appwriteStorage.getFileView('product_images', upload.$id);
-
-                const newProduct = {
-                    name,
-                    description,
-                    nameAr,
-                    descriptionAr,
-                    nameEn,
-                    descriptionEn,
-                    nameDe,
-                    descriptionDe,
-                    priceUsdCents,
-                    priceSyp,
-                    imageFileId: upload.$id,
-                    imageUrl: imageUrl.toString(),
-                    category,
-                    active,
-                    sortOrder
-                };
-
-                await databases.createDocument('mais_beauty_db', 'products', ID.unique(), newProduct);
-                form.reset();
-                document.getElementById('p-active').checked = true;
-                document.getElementById('p-sort-order').value = 0;
-                categorySelect.value = 'offers';
-                alert('\u062a\u0645 \u0625\u0636\u0627\u0641\u0629 \u0627\u0644\u0645\u0646\u062a\u062c \u0628\u0646\u062c\u0627\u062d!');
+                data.set('image', compressedFile, compressedFile.name);
             }
+
+            if (editProductId) {
+                await api(`/api/admin/products/${encodeURIComponent(editProductId)}`, { method: 'PUT', body: data });
+                exitEditMode();
+                alert('تم تحديث المنتج بنجاح!');
+            } else {
+                await api('/api/admin/products', { method: 'POST', body: data });
+                exitEditMode();
+                alert('تم إضافة المنتج بنجاح!');
+            }
+            await fetchAdminProducts();
         } catch (error) {
-            console.error('Fehler beim Speichern:', error);
-            alert('\u062d\u062f\u062b \u062e\u0637\u0623 \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u062d\u0641\u0638. (Fehler beim Speichern)');
+            handleApiError(error, 'حدث خطأ أثناء الحفظ. (Fehler beim Speichern)');
         } finally {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
         }
     });
 
-    // Delete Product Function
-    async function deleteProduct(id, imageFileId) {
-        if (confirm('\u0647\u0644 \u0623\u0646\u062a \u0645\u062a\u0623\u0643\u062f \u0645\u0646 \u062d\u0630\u0641 \u0647\u0630\u0627 \u0627\u0644\u0645\u0646\u062a\u062c\u061f \u0644\u0627 \u064a\u0645\u0643\u0646 \u0627\u0644\u062a\u0631\u0627\u062c\u0639 \u0639\u0646 \u0647\u0630\u0647 \u0627\u0644\u062e\u0637\u0648\u0629!')) {
-            // Bearbeitungsmodus abbrechen falls das gelöschte Produkt gerade bearbeitet wird
-            if (editProductId === id) exitEditMode();
-            try {
-                if (imageFileId && imageFileId !== 'undefined') {
-                    await appwriteStorage.deleteFile('product_images', imageFileId);
-                }
-                await databases.deleteDocument('mais_beauty_db', 'products', id);
-            } catch (error) {
-                console.error('Error removing document:', error);
-                alert('\u062d\u062f\u062b \u062e\u0637\u0623 \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u062d\u0630\u0641.');
-            }
+    // Produkt löschen
+    async function deleteProduct(id) {
+        if (!confirm('هل أنت متأكد من حذف هذا المنتج؟ لا يمكن التراجع عن هذه الخطوة!')) return;
+        if (editProductId === id) exitEditMode();
+        try {
+            await api(`/api/admin/products/${encodeURIComponent(id)}`, { method: 'DELETE' });
+            await fetchAdminProducts();
+        } catch (error) {
+            handleApiError(error, 'حدث خطأ أثناء الحذف.');
         }
     }
 
-    // Initial render
-    renderAdminProducts();
+    // Einmaliger Umzug der alten Appwrite-Daten nach Cloudflare
+    importBtn.addEventListener('click', async () => {
+        if (!confirm('Produkte, Fotos und Shop-Einstellungen aus Appwrite übernehmen? Bereits vorhandene Produkte bleiben unverändert.')) return;
+        importBtn.disabled = true;
+        importLog.style.display = 'block';
+        importLog.textContent = 'Import läuft …\n';
+        let offset = 0;
+        let imported = 0;
+        let skipped = 0;
+        try {
+            for (let round = 0; round < 100; round++) {
+                const result = await sendJson('/api/admin/import-appwrite', 'POST', { offset });
+                imported += result.imported;
+                skipped += result.skipped;
+                importLog.textContent += result.log.join('\n') + '\n';
+                importLog.scrollTop = importLog.scrollHeight;
+                if (result.done) break;
+                offset = result.nextOffset;
+            }
+            importLog.textContent += `\nFertig: ${imported} übernommen, ${skipped} übersprungen.`;
+            await Promise.all([loadShopSettings(), fetchAdminProducts()]);
+        } catch (error) {
+            importLog.textContent += `\nAbgebrochen: ${error.message}\nDer Import kann gefahrlos noch einmal gestartet werden.`;
+            if (error.status === 401) handleApiError(error, '');
+        } finally {
+            importBtn.disabled = false;
+        }
+    });
+
+    checkAuthState();
 });

@@ -1,18 +1,13 @@
-import { Client, Databases, Query } from "https://cdn.jsdelivr.net/npm/appwrite@16.1.0/+esm";
-
-const APPWRITE_ENDPOINT = "https://fra.cloud.appwrite.io/v1";
-const APPWRITE_PROJECT_ID = "6a0d8738002fb76a4caf";
-const APPWRITE_DATABASE_ID = "mais_beauty_db";
-const APPWRITE_PRODUCTS_COLLECTION_ID = "products";
-const APPWRITE_SETTINGS_COLLECTION_ID = "shop_settings";
-const APPWRITE_SETTINGS_DOCUMENT_ID = "main";
+// Daten kommen aus Cloudflare (Pages Functions + D1 + R2), siehe functions/
 const CART_STORAGE_KEY = "maisBeautyCart";
 
-const client = new Client()
-    .setEndpoint(APPWRITE_ENDPOINT)
-    .setProject(APPWRITE_PROJECT_ID);
-
-const databases = new Databases(client);
+async function fetchJson(url) {
+    const response = await fetch(url, { headers: { accept: "application/json" } });
+    if (!response.ok) {
+        throw new Error(`${url} antwortet mit ${response.status}`);
+    }
+    return response.json();
+}
 
 const appData = {
     translations: {
@@ -239,16 +234,12 @@ function init() {
 
 async function loadShopSettings() {
     try {
-        const settings = await databases.getDocument(
-            APPWRITE_DATABASE_ID,
-            APPWRITE_SETTINGS_COLLECTION_ID,
-            APPWRITE_SETTINGS_DOCUMENT_ID
-        );
+        const settings = await fetchJson("/api/settings");
         shopWhatsAppNumber = settings.whatsappNumber || "";
         shopOrderEmail = settings.orderEmail || "";
         shopContactEmail = settings.contactEmail || "";
     } catch (error) {
-        console.error("Appwrite shop settings load failed:", error);
+        console.error("Shop settings load failed:", error);
         shopWhatsAppNumber = "";
         shopOrderEmail = "";
         shopContactEmail = "";
@@ -265,33 +256,13 @@ async function loadProducts() {
     }
 
     try {
-        const response = await databases.listDocuments(
-            APPWRITE_DATABASE_ID,
-            APPWRITE_PRODUCTS_COLLECTION_ID,
-            [
-                Query.limit(100),
-                Query.select([
-                    "name",
-                    "description",
-                    "nameAr",
-                    "nameEn",
-                    "nameDe",
-                    "descriptionAr",
-                    "descriptionEn",
-                    "descriptionDe",
-                    "priceUsdCents",
-                    "imageUrl",
-                    "active",
-                    "sortOrder",
-                    "category"
-                ])
-            ]
-        );
+        const response = await fetchJson("/api/products");
 
-        appData.products = response.documents || [];
+        appData.products = response.products || [];
+        syncCartWithProducts();
         renderProducts();
     } catch (error) {
-        console.error("Appwrite products load failed:", error);
+        console.error("Products load failed:", error);
         appData.products = [];
         renderProducts();
     }
@@ -624,6 +595,22 @@ function loadCartFromStorage() {
         } catch (storageError) {
             cart = [];
         }
+    }
+}
+
+// Gespeicherte Warenkorb-Artikel mit aktuellen Produktdaten (Preis, Bild, Texte) abgleichen
+function syncCartWithProducts() {
+    if (!cart.length || !appData.products.length) return;
+    let changed = false;
+    cart = cart.map((item) => {
+        const product = appData.products.find((entry) => entry.$id === item.$id);
+        if (!product) return item;
+        changed = true;
+        return getCartStorageItem(Object.assign({}, product, { qty: item.qty })) || item;
+    });
+    if (changed) {
+        saveCartToStorage();
+        updateCartUI();
     }
 }
 
