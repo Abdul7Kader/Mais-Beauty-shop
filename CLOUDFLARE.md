@@ -31,7 +31,7 @@ Fehlt etwas davon, zeigt die Admin-Anmeldung einen gelben Hinweis, was noch fehl
 
 ## Danach
 
-- Appwrite wird vom Shop nicht mehr benutzt. Sobald der Shop auf Cloudflare live ist und kontrolliert wurde, kann das Appwrite-Projekt gelöscht werden. Änderungen, die nach dem 12.11.2026 noch in Appwrite gemacht wurden, sind nicht übernommen.
+- Das Appwrite-Projekt bleibt bestehen; die alte Appwrite-Version der Webseite läuft parallel weiter. Beide Versionen haben **getrennte Daten**: Was im Appwrite-Admin geändert wird, erscheint nicht in der Cloudflare-Version und umgekehrt. Übernommen wurde einmalig der Stand vom 12.11.2026.
 - Datensicherung: *D1 → mais-beauty-db → Time Travel* stellt die Datenbank auf einen früheren Zeitpunkt zurück (Gratis-Plan: letzte 7 Tage, bezahlter Plan: 30 Tage).
 
 ## Lokal testen
