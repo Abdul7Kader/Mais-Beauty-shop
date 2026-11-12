@@ -6,6 +6,8 @@
 //   ADMIN_PASSWORD → Passwort für den Admin-Bereich
 //   SESSION_SECRET → optional; ohne wird der Sitzungsschlüssel aus ADMIN_PASSWORD abgeleitet
 
+import { SEED_PRODUCTS, SEED_SETTINGS } from "./seed-data.js";
+
 export const CATEGORIES = ["offers", "serums", "masks", "eyes", "creams"];
 export const SETTINGS_KEYS = ["whatsappNumber", "orderEmail", "contactEmail"];
 export const TEXT_FIELDS = [
@@ -96,13 +98,42 @@ export async function getDb(env) {
     const db = requireDb(env);
     if (!schemaReady) {
         await db.batch(SCHEMA.map((sql) => db.prepare(sql)));
+        await seedOnce(db);
         schemaReady = true;
     }
     return db;
 }
 
+// Umzug aus Appwrite: Beim allerersten Start wird die leere Datenbank mit dem
+// Stand aus seed-data.js gefüllt. Danach nie wieder (Merker "_seeded"), damit
+// im Admin gelöschte Produkte nicht zurückkommen. INSERT OR IGNORE überschreibt nichts.
+async function seedOnce(db) {
+    const seeded = await db.prepare("SELECT value FROM settings WHERE key = '_seeded'").first();
+    if (seeded) return;
+
+    const product = db.prepare(`INSERT OR IGNORE INTO products (
+            id, name, description, nameAr, descriptionAr, nameEn, descriptionEn, nameDe, descriptionDe,
+            priceUsdCents, priceSyp, category, sortOrder, active, imageKey, createdAt, updatedAt
+        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17)`);
+    const setting = db.prepare("INSERT OR IGNORE INTO settings (key, value) VALUES (?1, ?2)");
+
+    const statements = SEED_PRODUCTS.map((p) => {
+        const n = normalizeProduct(p);
+        return product.bind(
+            p.id, n.name, n.description, n.nameAr, n.descriptionAr, n.nameEn, n.descriptionEn,
+            n.nameDe, n.descriptionDe, n.priceUsdCents, n.priceSyp, n.category, n.sortOrder,
+            n.active, p.imageKey, p.createdAt, p.updatedAt
+        );
+    });
+    for (const key of SETTINGS_KEYS) statements.push(setting.bind(key, SEED_SETTINGS[key] || ""));
+    statements.push(setting.bind("_seeded", new Date().toISOString()));
+    await db.batch(statements);
+}
+
+// Bild-Schlüssel: "produkte/…" liegt in R2, "/assets/…" ist eine feste Datei im Repository
 export function imageUrlFor(key) {
     if (!key) return "";
+    if (key.startsWith("/")) return key;
     return "/bilder/" + key.split("/").map(encodeURIComponent).join("/");
 }
 
@@ -278,7 +309,7 @@ export async function storeImage(bucket, file) {
 }
 
 export async function deleteImage(bucket, key) {
-    if (!key) return;
+    if (!key || key.startsWith("/") || !bucket) return;
     try {
         await bucket.delete(key);
     } catch (error) {

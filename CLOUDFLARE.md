@@ -7,7 +7,8 @@ Der Shop läuft komplett auf Cloudflare Pages:
 | Webseite (HTML, CSS, JS) | Pages (mit GitHub verbunden, `main` = live) | `index.html`, `script.js`, `admin.html`, `admin.js` |
 | Schnittstellen (API) | Pages Functions | `functions/` |
 | Produkte und Shop-Einstellungen | D1-Datenbank, Binding `DB` | Tabellen werden automatisch angelegt |
-| Produktfotos | R2-Bucket, Binding `BILDER` | ausgeliefert unter `/bilder/...` |
+| Produktfotos (übernommen aus Appwrite) | feste Dateien im Repository | `assets/produkte/` |
+| Neu hochgeladene Produktfotos | R2-Bucket, Binding `BILDER` | ausgeliefert unter `/bilder/...` |
 | Admin-Passwort | Secret `ADMIN_PASSWORD` | Anmeldung per Cookie, 7 Tage gültig |
 
 ## Einmalige Einrichtung im Cloudflare-Dashboard (dash.cloudflare.com)
@@ -21,13 +22,16 @@ Der Shop läuft komplett auf Cloudflare Pages:
 4. **Admin-Passwort setzen:** *Settings → Variables and Secrets → Add* → Typ **Secret**, Name `ADMIN_PASSWORD`, Wert = dein neues Admin-Passwort. Ebenfalls für Production **und** Preview.
    Optional `SESSION_SECRET` (beliebige lange Zufallszeichenfolge); ohne wird der Sitzungsschlüssel aus dem Passwort abgeleitet. Wer das Passwort ändert, meldet damit alle Sitzungen ab.
 5. **Neu bereitstellen**, damit die Bindings greifen: *Deployments* → beim neuesten Deployment *⋯ → Retry deployment*.
-6. **Daten umziehen:** `/admin.html` öffnen → mit dem Passwort anmelden → **„Aus Appwrite importieren“**. Übernimmt alle Produkte, Fotos und Shop-Einstellungen. Bereits vorhandene Produkte werden nicht überschrieben, der Import darf wiederholt werden.
+
+Der Umzug aus Appwrite passiert danach von selbst: Beim ersten Aufruf füllt sich die leere Datenbank mit allen 48 Produkten und den Shop-Einstellungen (Stand 12.11.2026, Daten in `functions/_shared/seed-data.js`, Fotos in `assets/produkte/`). Das passiert nur ein einziges Mal; im Admin gelöschte Produkte kommen nicht zurück.
+
+Ohne R2 läuft der Shop bereits vollständig, nur neue Fotos können im Admin erst nach Schritt 2 hochgeladen werden.
 
 Fehlt etwas davon, zeigt die Admin-Anmeldung einen gelben Hinweis, was noch fehlt.
 
 ## Danach
 
-- Appwrite wird vom Shop nicht mehr benutzt. Erst **nach** dem Import und einer Kontrolle des Shops das Appwrite-Projekt löschen; der Import liest die Daten aus Appwrite.
+- Appwrite wird vom Shop nicht mehr benutzt. Sobald der Shop auf Cloudflare live ist und kontrolliert wurde, kann das Appwrite-Projekt gelöscht werden. Änderungen, die nach dem 12.11.2026 noch in Appwrite gemacht wurden, sind nicht übernommen.
 - Datensicherung: *D1 → mais-beauty-db → Time Travel* stellt die Datenbank auf einen früheren Zeitpunkt zurück (Gratis-Plan: letzte 7 Tage, bezahlter Plan: 30 Tage).
 
 ## Lokal testen

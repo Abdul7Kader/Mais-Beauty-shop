@@ -119,8 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderEmailInput = document.getElementById('shop-order-email');
     const contactEmailInput = document.getElementById('shop-contact-email');
     const saveShopSettingsBtn = document.getElementById('save-shop-settings-btn');
-    const importBtn = document.getElementById('import-appwrite-btn');
-    const importLog = document.getElementById('import-log');
     const validCategories = ['offers', 'serums', 'masks', 'eyes', 'creams'];
 
     // State: welches Produkt wird gerade bearbeitet (null = neues Produkt)
@@ -167,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const missing = [];
             if (!state.passwordConfigured) missing.push('Secret ADMIN_PASSWORD');
             if (!state.databaseConfigured) missing.push('D1-Binding DB');
-            if (!state.imagesConfigured) missing.push('R2-Binding BILDER');
+            if (!state.imagesConfigured) missing.push('R2-Binding BILDER (nur für neue Fotos)');
             if (missing.length) {
                 setupHint.style.display = 'block';
                 setupHint.textContent = `Einrichtung in Cloudflare unvollständig, es fehlt: ${missing.join(', ')}`;
@@ -410,35 +408,6 @@ document.addEventListener('DOMContentLoaded', () => {
             handleApiError(error, 'حدث خطأ أثناء الحذف.');
         }
     }
-
-    // Einmaliger Umzug der alten Appwrite-Daten nach Cloudflare
-    importBtn.addEventListener('click', async () => {
-        if (!confirm('Produkte, Fotos und Shop-Einstellungen aus Appwrite übernehmen? Bereits vorhandene Produkte bleiben unverändert.')) return;
-        importBtn.disabled = true;
-        importLog.style.display = 'block';
-        importLog.textContent = 'Import läuft …\n';
-        let offset = 0;
-        let imported = 0;
-        let skipped = 0;
-        try {
-            for (let round = 0; round < 100; round++) {
-                const result = await sendJson('/api/admin/import-appwrite', 'POST', { offset });
-                imported += result.imported;
-                skipped += result.skipped;
-                importLog.textContent += result.log.join('\n') + '\n';
-                importLog.scrollTop = importLog.scrollHeight;
-                if (result.done) break;
-                offset = result.nextOffset;
-            }
-            importLog.textContent += `\nFertig: ${imported} übernommen, ${skipped} übersprungen.`;
-            await Promise.all([loadShopSettings(), fetchAdminProducts()]);
-        } catch (error) {
-            importLog.textContent += `\nAbgebrochen: ${error.message}\nDer Import kann gefahrlos noch einmal gestartet werden.`;
-            if (error.status === 401) handleApiError(error, '');
-        } finally {
-            importBtn.disabled = false;
-        }
-    });
 
     checkAuthState();
 });

@@ -175,19 +175,6 @@
             direction: ltr;
         }
 
-        .import-log {
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius);
-            padding: 10px;
-            max-height: 300px;
-            overflow: auto;
-            white-space: pre-wrap;
-            direction: ltr;
-            text-align: left;
-            font-size: 0.85rem;
-        }
-
         @media (max-width: 600px) {
             .form-row {
                 grid-template-columns: 1fr;
@@ -354,13 +341,6 @@
         </div>
 
         <div class="card">
-            <h2>نقل البيانات من Appwrite (Umzug aus Appwrite)</h2>
-            <p>Einmalig: übernimmt alle Produkte, Fotos und Shop-Einstellungen aus der alten Appwrite-Datenbank nach Cloudflare. Bereits vorhandene Produkte werden nicht überschrieben, der Import kann also gefahrlos wiederholt werden.</p>
-            <button type="button" id="import-appwrite-btn" class="btn">Aus Appwrite importieren</button>
-            <pre id="import-log" class="import-log" style="display: none;"></pre>
-        </div>
-
-        <div class="card">
             <h2>المنتجات الحالية (<span id="product-count">0</span>)</h2>
             <div id="product-list" class="product-list">
                 <!-- Products will be listed here -->
@@ -368,6 +348,6 @@
         </div>
     </div>
 
-    <script type="module" src="admin.js?v=5"></script>
+    <script type="module" src="admin.js?v=6"></script>
 </body>
 </html>

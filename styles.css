@@ -55,8 +55,7 @@ body {
     min-height: 100vh;
     color: var(--color-text-dark);
     line-height: 1.6;
-    padding-top: 80px; /* Offset for fixed navbar */
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: clip; /* Prevent horizontal scroll, ohne die mitlaufende Kopfleiste zu stören */
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -83,12 +82,12 @@ a:hover {
 }
 
 /* Navbar */
+/* Kopfleiste läuft mit (sticky) und schiebt den Inhalt nach unten, statt ihn zu verdecken */
 .navbar {
     background-color: var(--color-beige);
     padding: 1rem 0;
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: 0;
     width: 100%;
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -178,7 +177,7 @@ a:hover {
 /* Hero Section */
 .hero {
     background: var(--color-beige);
-    padding: 4rem 0;
+    padding: clamp(1.5rem, 4vw, 3rem) 0;
     text-align: center;
     border-bottom: 1px solid var(--color-border);
 }
@@ -198,16 +197,29 @@ a:hover {
     gap: var(--spacing-md);
 }
 
+/* Logo mit transparentem Hintergrund, passt sich der Seitenbreite an */
 .hero-logo {
-    max-width: 450px;
-    width: 100%;
+    display: block;
+    width: min(440px, 100%);
     height: auto;
     object-fit: contain;
-    mix-blend-mode: multiply;
+}
+
+.hero-logo-dark {
+    display: none;
+}
+
+[data-theme="dark"] .hero-logo-light {
+    display: none;
+}
+
+[data-theme="dark"] .hero-logo-dark {
+    display: block;
 }
 
 /* Products Section */
 .products-section {
+    scroll-margin-top: 24px;
     padding-top: var(--spacing-xl);
     padding-bottom: var(--spacing-xl);
 }
@@ -1064,9 +1076,6 @@ html[dir="rtl"] .footer-content {
 
 /* Responsive Small Mobile */
 @media (max-width: 600px) {
-    body {
-        padding-top: 150px; /* Larger offset for stacked navbar */
-    }
     .hero-content h2 { 
         font-size: 1.6rem; 
         text-align: center;
@@ -1077,33 +1086,67 @@ html[dir="rtl"] .footer-content {
         text-align: center;
         padding: 0 10px;
     }
-    .nav-content { 
-        flex-direction: column; 
-        height: auto; 
-        padding: 10px 0; 
-        gap: 10px; 
+    /* Kompakte Kopfleiste: oben Name + Knöpfe, darunter die Bereiche in einer wischbaren Zeile */
+    .navbar {
+        padding: 0.5rem 0 0.35rem;
     }
-    .main-nav ul {
-        gap: 0.8rem;
+    .nav-content {
+        flex-wrap: wrap;
+        height: auto;
+        row-gap: 0.4rem;
+        column-gap: 0.5rem;
     }
-    .main-nav a {
-        font-size: 1rem;
+    .logo h1 {
+        font-size: 1.35rem;
+        white-space: nowrap;
     }
     .controls {
+        flex-wrap: nowrap;
+        gap: 0.45rem;
+    }
+    .theme-toggle {
+        width: 38px;
+        height: 38px;
+        font-size: 1.25rem;
+    }
+    .switcher select {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.85rem;
+    }
+    .main-nav {
+        order: 3;
         width: 100%;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 0.7rem;
+    }
+    .main-nav ul {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 1.1rem;
+        overflow-x: auto;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+    }
+    .main-nav ul::-webkit-scrollbar {
+        display: none;
+    }
+    .main-nav li {
+        flex: 0 0 auto;
+    }
+    .main-nav a {
+        font-size: 0.95rem;
+        white-space: nowrap;
+    }
+    .products-section {
+        scroll-margin-top: 30px;
     }
     .floating-cart-btn {
-        width: 42px;
-        height: 42px;
+        width: 38px;
+        height: 38px;
     }
     .hero {
-        padding: 2rem 0;
+        padding: 1.25rem 0 1.5rem;
     }
     .hero-logo {
-        max-width: 80%;
+        width: min(290px, 76vw);
     }
     .section-title {
         font-size: 1.6rem;
